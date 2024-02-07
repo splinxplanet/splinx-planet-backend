@@ -1,34 +1,20 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
-const authRoutes = require("./routes/authRoutes");
-const userRoutes = require("./routes/userRoutes");
+const jwt = require("jsonwebtoken");
+const keys = process.env.JWT_SECRET;
 
-// dotenv config
-require("dotenv").config();
+// Generate JWT token
+exports.authenticationToken = (req, res, next) => {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
 
-const PORT = process.env.PORT || 3000;
+    if (!token) {
+        return res.status(401).json({ message: "Unauthorized User. Pls Login" });
+    }
 
-
-// Connect to MongoDB
-mongoose
-  .connect("mongodb://localhost:27017/mern-auth", { useNewUrlParser: true })
-    .then(() => {
-        console.log("✔✨✨Connected to MongoDB");
-
-        const app = express(); // Create Express app
-
-        app.use(bodyParser.json()); // JSON body parser
-
-
-        app.use("/auth", authRoutes); // Use auth routes
-        app.use("/user", userRoutes); // Use user routes
-
-        
-        app.listen(PORT, () => {
-            console.log(`👌✨Server running at http://localhost:${PORT}`);
-        });
-  })
-    .catch(err => console.log(err));
-  
-
+    jwt.verify(token, keys, (err, user) => {
+        if (err) {
+            return res.status(403).json({ message: "Forbidden" });
+        }
+        req.user = user;
+        next();
+    });
+}
