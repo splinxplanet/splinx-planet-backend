@@ -4,12 +4,12 @@ const userController = require("../controllers/userController");
 const { authenticationToken } = require("../utils/validation");
 
 // Get user profile
-router.get("/get-user", authenticationToken, userController.getUserProfile);
+router.get("/get-user/:userId", authenticationToken, userController.getUserProfile);
 
 // Update user profile
-router.put("/update-user", authenticationToken, userController.updateUserProfile);
+router.put("/update-user/:userId", authenticationToken, userController.updateUserProfile);
 
 // Delete user profile
-router.delete("/delete-user", authenticationToken, userController.deleteUserProfile);
+router.delete("/delete-user/:userId", authenticationToken, userController.deleteUserProfile);
 
 module.exports = router;
