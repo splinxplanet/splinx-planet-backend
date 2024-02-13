@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 // dotenv config
 require("dotenv").config();
+const cloudinary = require("../utils/imageUpload");
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -15,6 +16,20 @@ exports.registerUser = async (req, res) => {
     return res.status(400).json({ message: "User already exists" });
   }
 
+  // upload profile picture to cloudinary
+  try {
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      public_di: `${req.phoneNumber}_profile`,
+      width: 500,
+      height: 500,
+      crop: "fill",
+    });
+
+  } catch (error) {
+    console.log("upload error", error.message)
+  }
+
+  const uploadUrl = result.url;
   // Hash password
   const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -22,6 +37,7 @@ exports.registerUser = async (req, res) => {
   const newUser = new User({
     ...req.body,
     password: hashedPassword,
+    profileImg: uploadUrl,
   });
 
   // Save user to database
