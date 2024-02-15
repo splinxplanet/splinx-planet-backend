@@ -34,10 +34,12 @@ mongoose
         app.listen(PORT, () => {
             console.log(`👌✨Server running at http://localhost:${PORT}`);
         });
+
+        // export app
+        module.exports = app;
   })
     .catch(err => console.log(err));
   
 
-// export app
-module.exports = app;
+
 
