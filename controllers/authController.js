@@ -16,33 +16,19 @@ exports.registerUser = async (req, res) => {
     return res.status(400).json({ message: "User already exists" });
   }
 
-  // upload profile picture to cloudinary
-  try {
-    const result = await cloudinary.uploader.upload(req.file.path, {
-      public_di: `${req.phoneNumber}_profile`,
-      width: 500,
-      height: 500,
-      crop: "fill",
-    });
-
-  } catch (error) {
-    console.log("upload error", error.message)
-  }
-
-  const uploadUrl = result.url;
-  // Hash password
+   // Hash password
   const hashedPassword = await bcrypt.hash(password, 10);
 
   // Create new user
   const newUser = new User({
     ...req.body,
     password: hashedPassword,
-    profileImg: uploadUrl,
   });
 
   // Save user to database
   await newUser.save();
 
+  // res.status(201).json({ message: "User registered successfully" });
   res.status(201).json({ message: "User registered successfully" });
 };
 

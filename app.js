@@ -20,7 +20,7 @@ mongoose
 
         const app = express(); // Create Express app
 
-        app.use(bodyParser.json()); // JSON body parser middleware
+      app.use(bodyParser.json()); // JSON body parser middleware
         app.use(cors()); // Enable CORS middleware
         // restrict requests
         // app.use(cors({
@@ -37,4 +37,7 @@ mongoose
   })
     .catch(err => console.log(err));
   
+
+// export app
+module.exports = app;
 
