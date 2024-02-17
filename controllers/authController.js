@@ -53,10 +53,29 @@ exports.loginUser = async (req, res) => {
 
   // Generate JWT token
   const token = jwt.sign({ userId: user._id }, JWT_SECRET, {
-    expiresIn: "1h",
+    expiresIn: "1d",
   });
 
-  res.json({ token });
+  // send user profile and token
+  const userProfile = {
+    _id: user._id,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    emailAddress: user.emailAddress,
+    phoneNumber: user.phoneNumber,
+    profileImage: user.profileImage,
+    enableNotifications: user.enableNotifications,
+    country: user.country,
+    city: user.city,
+    homeAddress: user.homeAddress,
+    dob: user.dob,
+    age: user.age,
+    bio: user.bio,
+    myInterest: user.myInterest,
+    hashtagFollow: user.hashtagFollow,
+  }
+
+  res.json({ token, userProfile});
 };
 
 // forgot password
