@@ -72,7 +72,7 @@ exports.loginUser = async (req, res) => {
     age: user.age,
     bio: user.bio,
     myInterest: user.myInterest,
-    hashtagFollow: user.hashtagFollow,
+    hashtagFollowing: user.hashtagFollowing,
   }
 
   res.json({ token, userProfile});

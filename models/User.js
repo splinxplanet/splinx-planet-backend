@@ -25,8 +25,17 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
-  myInterest: [Object],
-  hashtagFollowing: [Object],
+  myInterest: [{
+      id: String,
+      interest: String,
+      isSelected: Boolean,
+  }],
+  hashtagFollowing: [{
+      id: String,
+      tag: String,
+      isSelected: Boolean,
+        
+  }],
 });
 
 module.exports = mongoose.model("User", userSchema);
