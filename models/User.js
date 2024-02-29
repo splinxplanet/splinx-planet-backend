@@ -36,6 +36,10 @@ const userSchema = new mongoose.Schema({
       isSelected: Boolean,
         
   }],
+  isAppInstalled: {
+      type: Boolean,
+      default: true,
+    },
 });
 
 module.exports = mongoose.model("User", userSchema);
