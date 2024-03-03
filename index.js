@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
+const eventRoutes = require("./routes/eventRoutes");
 
 // dotenv config
 require("dotenv").config();
@@ -28,7 +29,9 @@ mongoose
         // }));
 
         app.use("/auth", authRoutes); // Use auth routes
-        app.use("/user", userRoutes); // Use user routes
+      app.use("/user", userRoutes); // Use user routes
+      app.use("/event", eventRoutes); // Use event routes
+      
 
         
         app.listen(PORT, () => {
