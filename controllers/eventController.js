@@ -1,6 +1,7 @@
 
 const Event = require('../models/Event');
 const User = require('../models/User');
+const mongoose = require('mongoose');
 
 // create new event 
 exports.createEvent = async (req, res) => {
@@ -58,6 +59,11 @@ exports.registerForEvent = async (req, res) => {
     const eventId = req.params.eventId;
     const userId = req.body.userId; // Assuming you send userId in the request body
     const isAllowReminder = req.body.isAllowReminder; // Assuming you send isAllowReminder in the request body
+
+    // Validate eventId
+    if (!mongoose.isValidObjectId(eventId)) {
+      return res.status(400).json({ message: 'Invalid eventId' });
+    }
 
     // Check if the event exists
     const event = await Event.findById(eventId);
