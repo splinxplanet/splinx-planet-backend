@@ -1,5 +1,6 @@
 
 const Event = require('../models/Event');
+const User = require('../models/User');
 
 // create new event 
 exports.createEvent = async (req, res) => {
@@ -56,6 +57,7 @@ exports.registerForEvent = async (req, res) => {
   try {
     const eventId = req.params.eventId;
     const userId = req.body.userId; // Assuming you send userId in the request body
+    const isAllowReminder = req.body.isAllowReminder; // Assuming you send isAllowReminder in the request body
 
     // Check if the event exists
     const event = await Event.findById(eventId);
@@ -70,12 +72,12 @@ exports.registerForEvent = async (req, res) => {
     }
 
     // Check if the user is already registered for the event
-    if (event.eventMembers.includes(userId)) {
+    if (event.eventMembers.some(member => member.user.equals(userId))) {
       return res.status(400).json({ message: 'User already registered for the event' });
     }
 
-    // Register the user for the event
-    event.eventMembers.push(userId);
+    // Register the user for the event and set isAllowReminder
+    event.eventMembers.push({ user: userId, isAllowReminder });
     await event.save();
 
     res.status(200).json({ message: 'User registered for the event successfully' });

@@ -1,5 +1,11 @@
 const mongoose = require('mongoose');
 
+// Define a schema for event members
+const eventMemberSchema = new mongoose.Schema({
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  isAllowReminder: { type: Boolean, default: true }
+});
+
 const eventSchema = new mongoose.Schema({
   eventName: { type: String, required: true },
   eventDescription: { type: String, required: true },
@@ -15,7 +21,7 @@ const eventSchema = new mongoose.Schema({
   isPopular: { type: Boolean, default: false },
   isUpcoming: { type: Boolean, default: true },
   isOpen: { type: Boolean, default: true },
-  eventMembers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
+  eventMembers: [eventMemberSchema] // Use the eventMemberSchema for eventMembers
 });
 
 const Event = mongoose.model('Event', eventSchema);
