@@ -1,9 +1,9 @@
-import cookie from "cookie";
-import jwt from "jsonwebtoken";
-import { Server, Socket } from "socket.io";
-import { AvailableChatEvents, ChatEventEnum } from "../utils/constants.js";
-import { User } from "../models/User.js";
-import { ApiError } from "../utils/ApiError.js";
+const cookie = require('cookie');
+const jwt = require('jsonwebtoken');
+const { Server, Socket } = require('socket.io');
+const { AvailableChatEvents, ChatEventEnum } = require('../utils/constants.js');
+const { User } = require('../models/User.js');
+const { ApiError } = require('../utils/ApiError.js');
 
 /**
  * @description This function is responsible to allow user to join the chat represented by chatId (chatId). event happens when user switches between the chats
@@ -112,4 +112,4 @@ const emitSocketEvent = (req, roomId, event, payload) => {
   req.app.get("io").in(roomId).emit(event, payload);
 };
 
-export { initializeSocketIO, emitSocketEvent };
+module.exports = { initializeSocketIO, emitSocketEvent };

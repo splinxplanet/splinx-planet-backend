@@ -1,5 +1,15 @@
-import { Router } from "express";
-import {
+const express = require('express');
+const router = express.Router();
+
+// Import necessary modules
+const chatControllers = require("../controllers/chat.controllers.js");
+const authMiddlewares = require("../middlewares/auth.middlewares.js");
+const chatValidators = require("../validators/chat.validators.js");
+const mongodbValidators = require("../validators/mongodb.validators.js");
+const validate = require("../validators/validate.js");
+
+// Destructure functions from imported modules
+const {
   addNewParticipantInGroupChat,
   createAGroupChat,
   createOrGetAOneOnOneChat,
@@ -11,46 +21,56 @@ import {
   removeParticipantFromGroupChat,
   renameGroupChat,
   searchAvailableUsers,
-} from "../controllers/chat.controllers.js";
-import { verifyJWT } from "../middlewares/auth.middlewares.js";
-import {
+} = chatControllers;
+
+const { verifyJWT } = authMiddlewares;
+const {
   createAGroupChatValidator,
   updateGroupChatNameValidator,
-} from "../validators/chat.validators.js";
-import { mongoIdPathVariableValidator } from "../validators/mongodb.validators.js";
-import { validate } from "../validators/validate.js";
+} = chatValidators;
+const { mongoIdPathVariableValidator } = mongodbValidators;
 
-const router = Router();
-
+// Apply JWT verification to all routes in this router
 router.use(verifyJWT);
 
-router.route("/").get(getAllChats);
+// Route for getting all chats
+router.get("/", getAllChats);
 
-router.route("/users").get(searchAvailableUsers);
+// Route for searching available users
+router.get("/users", searchAvailableUsers);
 
-router
-  .route("/c/:receiverId")
-  .post(
-    mongoIdPathVariableValidator("receiverId"),
-    validate,
-    createOrGetAOneOnOneChat
-  );
+// Route for creating or getting a one-on-one chat
+router.post(
+  "/c/:receiverId",
+  mongoIdPathVariableValidator("receiverId"),
+  validate,
+  createOrGetAOneOnOneChat
+);
 
-router
-  .route("/group")
-  .post(createAGroupChatValidator(), validate, createAGroupChat);
+// Route for creating a group chat
+router.post("/group", createAGroupChatValidator(), validate, createAGroupChat);
 
+// Route for getting, updating, or deleting a group chat
 router
   .route("/group/:chatId")
-  .get(mongoIdPathVariableValidator("chatId"), validate, getGroupChatDetails)
+  .get(
+    mongoIdPathVariableValidator("chatId"),
+    validate,
+    getGroupChatDetails
+  )
   .patch(
     mongoIdPathVariableValidator("chatId"),
     updateGroupChatNameValidator(),
     validate,
     renameGroupChat
   )
-  .delete(mongoIdPathVariableValidator("chatId"), validate, deleteGroupChat);
+  .delete(
+    mongoIdPathVariableValidator("chatId"),
+    validate,
+    deleteGroupChat
+  );
 
+// Route for adding or removing participants from a group chat
 router
   .route("/group/:chatId/:participantId")
   .post(
@@ -66,12 +86,14 @@ router
     removeParticipantFromGroupChat
   );
 
+// Route for leaving a group chat
 router
   .route("/leave/group/:chatId")
   .delete(mongoIdPathVariableValidator("chatId"), validate, leaveGroupChat);
 
+// Route for deleting a one-on-one chat
 router
   .route("/remove/:chatId")
   .delete(mongoIdPathVariableValidator("chatId"), validate, deleteOneOnOneChat);
 
-export default router;
+module.exports = router;

@@ -1,12 +1,12 @@
-import mongoose from "mongoose";
-import { ChatEventEnum } from "../constants.js";
-import { Chat } from "../models/chat.models.js";
-import { ChatMessage } from "../models/message.models.js";
-import { emitSocketEvent } from "../socket/index.js";
-import { ApiError } from "../utils/ApiError.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
-import { asyncHandler } from "../utils/asyncHandler.js";
-import { getLocalPath, getStaticFilePath } from "../utils/helpers.js";
+const mongoose = require("mongoose");
+const { ChatEventEnum } = require("../utils/constants.js");
+const { Chat } = require("../models/chat.models.js");
+const { ChatMessage } = require("../models/message.models.js");
+const { emitSocketEvent } = require("../socket/index.js");
+const { ApiError } = require("../utils/ApiError.js");
+const { ApiResponse } = require("../utils/ApiResponse.js");
+const { asyncHandler } = require("../utils/asyncHandler.js");
+const { getLocalPath, getStaticFilePath } = require("../utils/helpers.js");
 
 /**
  * @description Utility function which returns the pipeline stages to structure the chat message schema with common lookups
@@ -155,4 +155,4 @@ const sendMessage = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, receivedMessage, "Message saved successfully"));
 });
 
-export { getAllMessages, sendMessage };
+module.exports = { getAllMessages, sendMessage };

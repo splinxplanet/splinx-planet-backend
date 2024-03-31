@@ -1,4 +1,4 @@
-const { authenticationToken } = require("../utils/validation");
+const authenticationToken = require("../utils/validation");
 
 const express = require('express');
 const router = express.Router();

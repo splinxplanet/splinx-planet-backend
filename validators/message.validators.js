@@ -1,4 +1,4 @@
-import { body } from "express-validator";
+const { body } = require("express-validator");
 
 const sendMessageValidator = () => {
   return [
@@ -10,4 +10,4 @@ const sendMessageValidator = () => {
   ];
 };
 
-export { sendMessageValidator };
+module.exports = { sendMessageValidator };

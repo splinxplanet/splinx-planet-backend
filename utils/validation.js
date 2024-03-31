@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const keys = process.env.JWT_SECRET;
 
 // Generate JWT token
-exports.authenticationToken = (req, res, next) => {
+const authenticationToken = (req, res, next) => {
     const authHeader = req.headers["authorization"];
     const token = authHeader && authHeader.split(" ")[1];
 
@@ -18,3 +18,5 @@ exports.authenticationToken = (req, res, next) => {
         next();
     });
 }
+
+module.exports = authenticationToken;

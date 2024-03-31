@@ -1,7 +1,8 @@
-import { errorHandler } from "../middlewares/error.middlewares.js";
+const { errorHandler } = require("../middlewares/error.middlewares.js");
+
 /**
  * @description Common Error class to throw an error from anywhere.
- * The {@link errorHandler} middleware will catch this error at the central place and it will return an appropriate response to the client
+ * The errorHandler middleware will catch this error at the central place and it will return an appropriate response to the client
  */
 class ApiError extends Error {
   /**
@@ -32,4 +33,4 @@ class ApiError extends Error {
   }
 }
 
-export { ApiError };
+module.exports = { ApiError };

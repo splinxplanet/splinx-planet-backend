@@ -1,13 +1,13 @@
-import mongoose from "mongoose";
-import { ChatEventEnum } from "../utils/constants.js";
-import { User } from "../models/User.js";
-import { Chat } from "../models/chat.models.js";
-import { ChatMessage } from "../models/message.models.js";
-import { emitSocketEvent } from "../socket/index.js";
-import { ApiError } from "../utils/ApiError.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
-import { asyncHandler } from "../utils/asyncHandler.js";
-import { removeLocalFile } from "../utils/helpers.js";
+const mongoose = require("mongoose");
+const { ChatEventEnum } = require("../utils/constants.js");
+const { User } = require("../models/User.js");
+const { Chat } = require("../models/chat.models.js");
+const { ChatMessage } = require("../models/message.models.js");
+const { emitSocketEvent } = require("../socket/index.js");
+const { ApiError } = require("../utils/ApiError.js");
+const { ApiResponse } = require("../utils/ApiResponse.js");
+const { asyncHandler } = require("../utils/asyncHandler.js");
+const { removeLocalFile } = require("../utils/helpers.js");
 
 /**
  * @description Utility function which returns the pipeline stages to structure the chat schema with common lookups
@@ -637,7 +637,7 @@ const getAllChats = asyncHandler(async (req, res) => {
     );
 });
 
-export {
+module.exports = {
   addNewParticipantInGroupChat,
   createAGroupChat,
   createOrGetAOneOnOneChat,

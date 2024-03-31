@@ -1,11 +1,11 @@
-import { body, param } from "express-validator";
+const { body, param } = require("express-validator");
 
 /**
  *
  * @param {string} idName
  * @description A common validator responsible to validate mongodb ids passed in the url's path variable
  */
-export const mongoIdPathVariableValidator = (idName) => {
+const mongoIdPathVariableValidator = (idName) => {
   return [
     param(idName).notEmpty().isMongoId().withMessage(`Invalid ${idName}`),
   ];
@@ -16,6 +16,8 @@ export const mongoIdPathVariableValidator = (idName) => {
  * @param {string} idName
  * @description A common validator responsible to validate mongodb ids passed in the request body
  */
-export const mongoIdRequestBodyValidator = (idName) => {
+const mongoIdRequestBodyValidator = (idName) => {
   return [body(idName).notEmpty().isMongoId().withMessage(`Invalid ${idName}`)];
 };
+
+module.exports = {mongoIdPathVariableValidator, mongoIdRequestBodyValidator}

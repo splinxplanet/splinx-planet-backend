@@ -1,10 +1,10 @@
-import { AvailableUserRoles } from "../constants.js";
-import { User } from "../models/User.js";
-import { ApiError } from "../utils/ApiError.js";
-import { asyncHandler } from "../utils/asyncHandler.js";
-import jwt from "jsonwebtoken";
+const jwt = require("jsonwebtoken");
+const { User } = require("../models/User.js");
+const { ApiError } = require("../utils/ApiError.js");
+const { asyncHandler } = require("../utils/asyncHandler.js");
+const { AvailableUserRoles } = require("../utils/constants.js");
 
-export const verifyJWT = asyncHandler(async (req, res, next) => {
+const verifyJWT = asyncHandler(async (req, res, next) => {
   const token =
     req.cookies?.accessToken ||
     req.header("Authorization")?.replace("Bearer ", "");
@@ -19,21 +19,16 @@ export const verifyJWT = asyncHandler(async (req, res, next) => {
       "-password -refreshToken -emailVerificationToken -emailVerificationExpiry"
     );
     if (!user) {
-      // Client should make a request to /api/v1/users/refresh-token if they have refreshToken present in their cookie
-      // Then they will get a new access token which will allow them to refresh the access token without logging out the user
       throw new ApiError(401, "Invalid access token");
     }
     req.user = user;
     next();
   } catch (error) {
-    // Client should make a request to /api/v1/users/refresh-token if they have refreshToken present in their cookie
-    // Then they will get a new access token which will allow them to refresh the access token without logging out the user
     throw new ApiError(401, error?.message || "Invalid access token");
   }
 });
 
-
-export const getLoggedInUserOrIgnore = asyncHandler(async (req, res, next) => {
+const getLoggedInUserOrIgnore = asyncHandler(async (req, res, next) => {
   const token =
     req.cookies?.accessToken ||
     req.header("Authorization")?.replace("Bearer ", "");
@@ -46,18 +41,11 @@ export const getLoggedInUserOrIgnore = asyncHandler(async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
-    // Fail silently with req.user being falsy
     next();
   }
 });
 
-/**
- * @param {AvailableUserRoles} roles
- * @description
- * * This middleware is responsible for validating multiple user role permissions at a time.
- * * So, in future if we have a route which can be accessible by multiple roles, we can achieve that with this middleware
- */
-export const verifyPermission = (roles = []) =>
+const verifyPermission = (roles = []) =>
   asyncHandler(async (req, res, next) => {
     if (!req.user?._id) {
       throw new ApiError(401, "Unauthorized request");
@@ -69,7 +57,7 @@ export const verifyPermission = (roles = []) =>
     }
   });
 
-export const avoidInProduction = asyncHandler(async (req, res, next) => {
+const avoidInProduction = asyncHandler(async (req, res, next) => {
   if (process.env.NODE_ENV === "development") {
     next();
   } else {
@@ -79,3 +67,10 @@ export const avoidInProduction = asyncHandler(async (req, res, next) => {
     );
   }
 });
+
+module.exports = {
+  verifyJWT,
+  getLoggedInUserOrIgnore,
+  verifyPermission,
+  avoidInProduction,
+};

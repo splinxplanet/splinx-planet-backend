@@ -1,4 +1,4 @@
-import { body } from "express-validator";
+const { body } = require("express-validator")
 
 const createAGroupChatValidator = () => {
   return [
@@ -18,4 +18,4 @@ const updateGroupChatNameValidator = () => {
   return [body("name").trim().notEmpty().withMessage("Group name is required")];
 };
 
-export { createAGroupChatValidator, updateGroupChatNameValidator };
+module.exports = { createAGroupChatValidator, updateGroupChatNameValidator };

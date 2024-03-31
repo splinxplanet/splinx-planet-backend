@@ -1,13 +1,13 @@
-import { Router } from "express";
-import {
+const { Router } = require("express");
+const {
   getAllMessages,
   sendMessage,
-} from "../controllers/message.controllers.js";
-import { verifyJWT } from "../middlewares/auth.middlewares.js";
-import { upload } from "../middlewares/multer.middlewares.js";
-import { sendMessageValidator } from "../validators/message.validators.js";
-import { mongoIdPathVariableValidator } from "../validators/mongodb.validators.js";
-import { validate } from "../validators/validate.js";
+} = require("../controllers/message.controllers.js");
+const { verifyJWT } = require("../middlewares/auth.middlewares.js");
+const { upload } = require("../middlewares/multer.middlewares.js");
+const { sendMessageValidator } = require("../validators/message.validators.js");
+const { mongoIdPathVariableValidator } = require("../validators/mongodb.validators.js");
+const validate = require("../validators/validate.js");
 
 const router = Router();
 
@@ -24,4 +24,5 @@ router
     sendMessage
   );
 
-export default router;
+// export default router;
+module.exports = router;
