@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/userController");
-const { authenticationToken } = require("../utils/validation");
+const authenticationToken = require("../utils/validation");
 
 // Get user profile
 router.get("/get-user/:userId", authenticationToken, userController.getUserProfile);
