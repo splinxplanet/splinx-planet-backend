@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-// Import necessary modules
+// Import all necessary modules
 const chatControllers = require("../controllers/chat.controllers.js");
 const authMiddlewares = require("../middlewares/auth.middlewares.js");
 const chatValidators = require("../validators/chat.validators.js");

@@ -9,6 +9,7 @@ const { ApiError } = require('../utils/ApiError.js');
  * @description This function is responsible to allow user to join the chat represented by chatId (chatId). event happens when user switches between the chats
  * @param {Socket<import("socket.io/dist/typed-events").DefaultEventsMap, import("socket.io/dist/typed-events").DefaultEventsMap, import("socket.io/dist/typed-events").DefaultEventsMap, any>} socket
  */
+
 const mountJoinChatEvent = (socket) => {
   socket.on(ChatEventEnum.JOIN_CHAT_EVENT, (chatId) => {
     console.log(`User joined the chat 🤝. chatId: `, chatId);
