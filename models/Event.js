@@ -22,7 +22,9 @@ const eventSchema = new mongoose.Schema({
   isUpcoming: { type: Boolean, default: true },
   isOpen: { type: Boolean, default: true },
   eventMembers: [eventMemberSchema] // Use the eventMemberSchema for eventMembers
-});
+},
+  { timestamps: true }
+);
 
 const Event = mongoose.model('Event', eventSchema);
 
