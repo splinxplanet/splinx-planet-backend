@@ -16,7 +16,8 @@ exports.getUserProfile = async (req, res) => {
         console.error(error);
         res.status(500).json({ message: "Internal server error" });
     }
-};
+}
+
 
 // Update user profile
 exports.updateUserProfile = async (req, res) => {
@@ -122,12 +123,20 @@ exports.loginFriends = async (req, res) => {
 exports.getAllUsers = async (req, res) => {
   const loggedInUserId = req.params.userId;
 
-  User.find({ _id: { $ne: loggedInUserId } })
-    .then((users) => {
-      res.status(200).json(users);
-    })
-    .catch((err) => {
-      console.log("Error retrieving users", err);
-      res.status(500).json({ message: "Error retrieving users" });
-    });
+  if (!loggedInUserId) {
+    return res.status(400).json({ message: "User ID is missing" });
+  }
+
+  try {
+    const users = await User.find({ _id: { $ne: loggedInUserId } });
+    
+    if (users.length === 0) {
+      return res.status(404).json({ message: "No users found" });
+    }
+
+    res.status(200).json(users);
+  } catch (err) {
+    console.error("Error retrieving users", err);
+    res.status(500).json({ message: "Error retrieving users" });
+  }
 };
