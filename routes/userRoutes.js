@@ -24,4 +24,7 @@ router.post("/friend-request/accept", authenticationToken, userController.accept
 // get all login friends
 router.get("/accepted-friends/:userId", authenticationToken, userController.loginFriends);
 
+// get all users
+router.get("/all-users", authenticationToken, userController.getAllUsers);
+
 module.exports = router;
