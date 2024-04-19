@@ -73,6 +73,26 @@ exports.showAllFriendRequest = async (req, res) => {
   }
 };
 
+// endpoint to get all sent friends request
+exports.getSentFriendRequests = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const user = await User.findById(userId).populate("sentFriendRequests");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const sentFriendRequests = user.sentFriendRequests;
+
+    res.status(200).json(sentFriendRequests);
+  } catch (error) {
+    console.error("error", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 //endpoint to accept a friend-request of a particular person
 exports.acceptFriendRequest = async (req, res) => {
   try {

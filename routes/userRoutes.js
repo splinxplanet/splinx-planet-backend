@@ -18,6 +18,9 @@ router.post("/friend-request", authenticationToken, userController.sendFriendReq
 // get all friend request
 router.get("/friend-request/:userId", authenticationToken, userController.showAllFriendRequest);
 
+// get all sent friend request
+router.get("/sent-friend-request/:userId", authenticationToken, userController.getSentFriendRequests);
+
 // accept friend request
 router.post("/friend-request/accept", authenticationToken, userController.acceptFriendRequest);
 
