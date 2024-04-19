@@ -73,6 +73,26 @@ exports.showAllFriendRequest = async (req, res) => {
   }
 };
 
+// endpoint to get all sent friends request
+exports.getSentFriendRequests = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const user = await User.findById(userId).populate("sentFriendRequests");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const sentFriendRequests = user.sentFriendRequests;
+
+    res.status(200).json(sentFriendRequests);
+  } catch (error) {
+    console.error("error", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 //endpoint to accept a friend-request of a particular person
 exports.acceptFriendRequest = async (req, res) => {
   try {
@@ -119,6 +139,26 @@ exports.loginFriends = async (req, res) => {
   }
 };
     
+// get user friends
+exports.getUserFriends = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const user = await User.findById(userId).populate("friends");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const friendIds = user.friends.map((friend) => friend._id);
+
+    res.status(200).json(friendIds);
+  } catch (error) {
+    console.error("error", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 //endpoint to access all the users except the user who's is currently logged in!
 exports.getAllUsers = async (req, res) => {
   const loggedInUserId = req.params.userId;

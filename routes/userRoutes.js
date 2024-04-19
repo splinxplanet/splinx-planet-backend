@@ -18,11 +18,17 @@ router.post("/friend-request", authenticationToken, userController.sendFriendReq
 // get all friend request
 router.get("/friend-request/:userId", authenticationToken, userController.showAllFriendRequest);
 
+// get all sent friend request
+router.get("/sent-friend-request/:userId", authenticationToken, userController.getSentFriendRequests);
+
 // accept friend request
 router.post("/friend-request/accept", authenticationToken, userController.acceptFriendRequest);
 
 // get all login friends
 router.get("/accepted-friends/:userId", authenticationToken, userController.loginFriends);
+
+// get user friends
+router.get("/friends/:userId", authenticationToken, userController.getUserFriends);
 
 // get all users
 router.get("/all-users/:userId", authenticationToken, userController.getAllUsers);
