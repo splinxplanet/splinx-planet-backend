@@ -24,6 +24,9 @@ router.post("/friend-request/accept", authenticationToken, userController.accept
 // get all login friends
 router.get("/accepted-friends/:userId", authenticationToken, userController.loginFriends);
 
+// get user friends
+router.get("/friends/:userId", authenticationToken, userController.getUserFriends);
+
 // get all users
 router.get("/all-users/:userId", authenticationToken, userController.getAllUsers);
 

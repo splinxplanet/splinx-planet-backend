@@ -119,6 +119,26 @@ exports.loginFriends = async (req, res) => {
   }
 };
     
+// get user friends
+exports.getUserFriends = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const user = await User.findById(userId).populate("friends");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const friendIds = user.friends.map((friend) => friend._id);
+
+    res.status(200).json(friendIds);
+  } catch (error) {
+    console.error("error", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 //endpoint to access all the users except the user who's is currently logged in!
 exports.getAllUsers = async (req, res) => {
   const loggedInUserId = req.params.userId;
