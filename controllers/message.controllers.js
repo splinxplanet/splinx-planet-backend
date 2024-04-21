@@ -39,6 +39,7 @@ const chatMessageCommonAggregation = () => {
   ];
 };
 
+// get all messages
 const getAllMessages = asyncHandler(async (req, res) => {
   const { chatId } = req.params;
 
@@ -74,6 +75,7 @@ const getAllMessages = asyncHandler(async (req, res) => {
     );
 });
 
+// send message
 const sendMessage = asyncHandler(async (req, res) => {
   const { chatId } = req.params;
   const { content } = req.body;

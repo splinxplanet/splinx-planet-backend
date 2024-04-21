@@ -215,6 +215,7 @@ const createOrGetAOneOnOneChat = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, payload, "Chat retrieved successfully"));
 });
 
+// create chat group
 const createAGroupChat = asyncHandler(async (req, res) => {
   const { name, participants } = req.body;
 
@@ -278,6 +279,7 @@ const createAGroupChat = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, payload, "Group chat created successfully"));
 });
 
+// get group chat details
 const getGroupChatDetails = asyncHandler(async (req, res) => {
   const { chatId } = req.params;
   const groupChat = await Chat.aggregate([
@@ -301,6 +303,7 @@ const getGroupChatDetails = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, chat, "Group chat fetched successfully"));
 });
 
+// rename group chat
 const renameGroupChat = asyncHandler(async (req, res) => {
   const { chatId } = req.params;
   const { name } = req.body;

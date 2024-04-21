@@ -1,28 +1,31 @@
-const { Router } = require("express");
-const {
-  getAllMessages,
-  sendMessage,
-} = require("../controllers/message.controllers.js");
-const { verifyJWT } = require("../middlewares/auth.middlewares.js");
-const { upload } = require("../middlewares/multer.middlewares.js");
-const { sendMessageValidator } = require("../validators/message.validators.js");
-const { mongoIdPathVariableValidator } = require("../validators/mongodb.validators.js");
-const validate = require("../validators/validate.js");
+const express = require("express");
+const router = express.Router();
+const messageController = require("../controllers/messageController");
+const authController = require("../controllers/authController");
+const multer = require("multer");
 
-const router = Router();
+// Configure multer for handling file uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "files/"); // Specify the desired destination folder
+  },
+  filename: function (req, file, cb) {
+    // Generate a unique filename for the uploaded file
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + "-" + file.originalname);
+  },
+});
 
-router.use(verifyJWT);
+const upload = multer({ storage: storage });
 
-router
-  .route("/:chatId")
-  .get(mongoIdPathVariableValidator("chatId"), validate, getAllMessages)
-  .post(
-    upload.fields([{ name: "attachments", maxCount: 5 }]),
-    mongoIdPathVariableValidator("chatId"),
-    sendMessageValidator(),
-    validate,
-    sendMessage
-  );
+// endpoint to post new message and store
+router.post('/messages', upload.single("imageFile"), authController, messageController.postMessage);
 
-// export default router;
-module.exports = router;
+// endpoint to get userDetails to create chatroom
+router.get('/user/:userId', authController, messageController.getUserDetails);
+
+// endpoint to fetch messages between user
+router.get('/messages/:senderId/:recipientId', authController, messageController.fetchMessages);
+
+// endpoint to delete messages
+router.delete('/deleteMessage', authController, messageController.deleteMessage);
