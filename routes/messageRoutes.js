@@ -19,13 +19,13 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // endpoint to post new message and store
-router.post('/messages', upload.single("imageFile"), authController, messageController.postMessage);
+router.post('/messages', upload.single("imageFile"), messageController.postMessage);
 
 // endpoint to get userDetails to create chatroom
-router.get('/user/:userId', authController, messageController.getUserDetails);
+router.get('/user/:userId', messageController.getUserDetails);
 
 // endpoint to fetch messages between user
-router.get('/messages/:senderId/:recipientId', authController, messageController.fetchMessages);
+router.get('/messages/:senderId/:recipientId', messageController.fetchMessages);
 
 // endpoint to delete messages
-router.delete('/deleteMessage', authController, messageController.deleteMessage);
+router.delete('/deleteMessage', messageController.deleteMessage);
