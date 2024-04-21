@@ -26,12 +26,12 @@ exports.postMessage = async (req, res) => {
 // get userDetails controller
 exports.getUserDetails = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { recipientId } = req.params;
 
     //fetch the user data from the user ID
-    const recipientId = await User.findById(userId);
+    const recipientDetails = await User.findById(recipientId);
 
-    res.json(recipientId);
+    res.json(recipientDetails);
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -41,12 +41,12 @@ exports.getUserDetails = async (req, res) => {
 // fetch messages between user controller
 exports.fetchMessages = async (req, res) => {
   try {
-    const { senderId, recipientId } = req.params;
+    const { userId, recipientId } = req.params;
 
     const messages = await Message.find({
       $or: [
-        { senderId: senderId, recipientId: recipientId },
-        { senderId: recipientId, recipientId: senderId },
+        { senderId: userId, recipientId: recipientId },
+        { senderId: recipientId, recipientId: userId },
       ],
     }).populate("senderId", "_id name");
 
