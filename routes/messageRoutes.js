@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const messageController = require("../controllers/messageController");
-const authController = require("../controllers/authController");
+const authenticationToken = require("../utils/validation");
 const multer = require("multer");
 
 // Configure multer for handling file uploads
@@ -19,13 +19,15 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // endpoint to post new message and store
-router.post('/messages', upload.single("imageFile"), messageController.postMessage);
+router.post('/messages', upload.single("imageFile"), authenticationToken, messageController.postMessage);
 
 // endpoint to get userDetails to create chatroom
-router.get('/user/:userId', messageController.getUserDetails);
+router.get('/user/:userId', authenticationToken, messageController.getUserDetails);
 
 // endpoint to fetch messages between user
-router.get('/messages/:senderId/:recipientId', messageController.fetchMessages);
+router.get('/messages/:senderId/:recipientId', authenticationToken, messageController.fetchMessages);
 
 // endpoint to delete messages
-router.delete('/deleteMessage', messageController.deleteMessage);
+router.delete('/deleteMessage', authenticationToken, messageController.deleteMessage);
+
+module.exports = router;

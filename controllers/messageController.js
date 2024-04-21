@@ -41,12 +41,12 @@ exports.getUserDetails = async (req, res) => {
 // fetch messages between user controller
 exports.fetchMessages = async (req, res) => {
   try {
-    const { userId, recipientId } = req.params;
+    const { senderId, recipientId } = req.params;
 
     const messages = await Message.find({
       $or: [
-        { senderId: userId, recipientId: recipientId },
-        { senderId: recipientId, recipientId: userId },
+        { senderId: senderId, recipientId: recipientId },
+        { senderId: recipientId, recipientId: senderId },
       ],
     }).populate("senderId", "_id name");
 
