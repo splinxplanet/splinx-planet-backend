@@ -1,6 +1,6 @@
 const User = require("../models/User");
 // import message model
-const Message = require("../models/Message");
+const Message = require("../models/MessagingModel");
 
 // post new message and store controller
 exports.postMessage = async (req, res) => {
