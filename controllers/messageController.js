@@ -1,4 +1,5 @@
 const User = require("../models/User");
+// import message model
 const Message = require("../models/Message");
 
 // post new message and store controller
