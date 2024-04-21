@@ -5,7 +5,6 @@ const cors = require("cors");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const eventRoutes = require("./routes/eventRoutes");
-const chatRoutes = require("./routes/chatRoutes");
 const messageRoutes = require("./routes/messageRoutes");
 
 // dotenv config
@@ -32,7 +31,6 @@ mongoose
     app.use("/auth", authRoutes); // Use auth routes
     app.use("/user", userRoutes); // Use user routes
     app.use("/event", eventRoutes); // Use event routes
-    app.use("/chat", chatRoutes); // use chat routes
     app.use("/message", messageRoutes); // use message routes
 
     app.listen(PORT, () => {
