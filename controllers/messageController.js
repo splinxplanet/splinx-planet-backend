@@ -27,10 +27,10 @@ exports.postMessage = async (req, res) => {
 // get userDetails controller
 exports.getUserDetails = async (req, res) => {
   try {
-    const { recipientId } = req.params;
+    const { userId } = req.params;
 
     //fetch the user data from the user ID
-    const recipientDetails = await User.findById(recipientId);
+    const recipientDetails = await User.findById(userId);
 
     res.json(recipientDetails);
   } catch (error) {
