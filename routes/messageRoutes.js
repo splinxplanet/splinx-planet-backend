@@ -19,7 +19,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // endpoint to post new message and store
-router.post('/messages', upload.single("imageFile"), authenticationToken, messageController.postMessage);
+router.post('/messages', authenticationToken, messageController.postMessage);
 
 // endpoint to get userDetails to create chatroom
 router.get('/user/:userId', authenticationToken, messageController.getUserDetails);
