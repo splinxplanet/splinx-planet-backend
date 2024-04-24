@@ -5,7 +5,7 @@ const Message = require("../models/MessagingModel");
 // post new message and store controller
 exports.postMessage = async (req, res) => {
   try {
-    const { senderId, recipientId, messageType, messageText, imageFileUrl } = req.body;
+    const { senderId, recipientId, messageType, messageText, imageUrl } = req.body;
 
     const newMessage = new Message({
       senderId,
@@ -13,7 +13,7 @@ exports.postMessage = async (req, res) => {
       messageType,
       message: messageText,
       timestamp: new Date(),
-      imageUrl: messageType === "image" ? imageFileUrl : null,
+      imageUrl: messageType === "image" ? imageUrl : null,
     });
 
     await newMessage.save();
