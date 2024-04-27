@@ -7,7 +7,10 @@ const postSchema = new mongoose.Schema({
   postText: { type: String, required: true },
   postImage: String,
   postTimestamp: { type: Date, default: Date.now },
-  postLikes: { type: Number, default: 0 },
+  postLikes: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Like'
+  }],
   comments: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Comment'
