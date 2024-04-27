@@ -12,6 +12,16 @@ exports.createCommunity = async (req, res) => {
   }
 };
 
+// get all community
+exports.getAllCommunities = async (req, res) => {
+  try {
+    const communities = await Community.find();
+    res.json(communities);
+  } catch (error) {
+    res.status(404).json({ error: 'Communities not found' });
+  }
+};
+
 // get a community by id
 exports.getCommunityById = async (req, res) => {
   try {
