@@ -13,6 +13,6 @@ const communitySchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Post'
   }]
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model('Community', communitySchema);

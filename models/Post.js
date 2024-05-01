@@ -19,6 +19,6 @@ const postSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Community'
   }
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model('Post', postSchema);
