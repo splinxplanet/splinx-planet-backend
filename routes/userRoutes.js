@@ -6,6 +6,9 @@ const authenticationToken = require("../utils/validation");
 // Get user profile
 router.get("/get-user/:userId", authenticationToken, userController.getUserProfile);
 
+// get all user profileImg, firstName, id, emailAddress
+router.get("/get-all-users", authenticationToken, userController.getAllUsersProfile);
+
 // Update user profile
 router.put("/update-user/:userId", authenticationToken, userController.updateUserProfile);
 
