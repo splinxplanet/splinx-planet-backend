@@ -6,6 +6,6 @@ const replySchema = new mongoose.Schema({
   replyBy: { type: String, required: true },
   replyText: { type: String, required: true },
   replyTimestamp: { type: Date, default: Date.now }
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model('Reply', replySchema);
