@@ -37,9 +37,10 @@ exports.likePost = async (req, res) => {
 
 // get all posts in a community
 exports.getPostById = async (req, res) => {
+  // get all post that match the community id
   try {
-    const post = await Post.findById(req.params.id);
-    res.json(post);
+    const posts = await Post.find({ community: req.params.id });
+    res.json(posts);
   } catch (error) {
     res.status(404).json({ error: 'Post not found' });
   }
