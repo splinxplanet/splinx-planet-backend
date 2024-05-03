@@ -17,33 +17,61 @@ exports.createPost = async (req, res) => {
 
 // like a post
 exports.likePost = async (req, res) => {
-  const { likeBy } = req.body;
   try {
-    const post = await Post.findById(req.params.id);
-    
-    // check if likeBy is already in the postLikes array
-    const index = post.postLikes.findIndex(like => like.toString() === likeBy.toString());
-    
-    if (index !== -1) {
-      return res.status(400).json({ error: 'Post already liked' });
+        const postId = req.params.postId;
+        const userId = req.body.userId; // Assuming userId is sent in the request body
+        
+        // Check if the post exists
+        const post = await Post.findById(postId);
+        if (!post) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
+
+        // Check if the user has already liked the post
+        const existingLike = await Like.findOne({ likeBy: userId });
+        if (existingLike) {
+            return res.status(400).json({ message: 'You have already liked this post' });
+        }
+
+        // Create a new like
+        const like = new Like({
+            likeBy: userId
+        });
+
+        // Save the like to the database
+        await like.save();
+
+        // Add the like to the post
+        post.postLikes.push(like);
+        await post.save();
+
+        return res.status(201).json({ message: 'Post liked successfully' });
+    } catch (error) {
+        console.error('Error liking post:', error);
+        return res.status(500).json({ message: 'Internal server error' });
     }
-
-    // if not, add likeBy to the postLikes array
-    const updatedPost = await Post.findByIdAndUpdate(req.params.id, {
-      $push: { postLikes: { likeBy } }
-    }, { new: true });
-
-    // if updatedPost is successful, return the postLikes array
-     if (updatedPost) {
-       res.json(updatedPost.postLikes);
-     } else {
-        res.status(404).json({ error: 'Post not found' });
-      }
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
 };
 
+// fetch all likes for a post
+exports.getPostLikes = async (req, res) => {
+  try {
+        const postId = req.params.postId;
+        
+        // Check if the post exists
+        const post = await Post.findById(postId).populate('postLikes'); // Populate the postLikes field
+        
+        if (!post) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
+
+        // Extract and return the likes
+        const likes = post.postLikes;
+        return res.status(200).json({ likes });
+    } catch (error) {
+        console.error('Error fetching post likes:', error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+};
 // get all posts in a community
 exports.getPostById = async (req, res) => {
   // get all post that match the community id
