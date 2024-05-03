@@ -8,8 +8,7 @@ const postSchema = new mongoose.Schema({
   postImage: String,
   postTimestamp: { type: Date, default: Date.now },
   postLikes: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Like'
+        type: String
   }],
   comments: [{
     type: mongoose.Schema.Types.ObjectId,
