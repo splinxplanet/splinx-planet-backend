@@ -39,7 +39,7 @@ exports.likePost = async (req, res) => {
         res.status(404).json({ error: 'Post not found' });
       }
   } catch (error) {
-    res.status(500).json({ error: 'Could not like post' });
+    res.status(500).json({ error: error.message });
   }
 };
 
