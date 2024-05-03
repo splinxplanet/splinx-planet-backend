@@ -22,7 +22,8 @@ exports.likePost = async (req, res) => {
     const post = await Post.findById(req.params.id);
     
     // check if likeBy is already in the postLikes array
-    const index = post.postLikes.findIndex(like => like.likeBy === likeBy);
+    const index = post.postLikes.findIndex(like => like.toString() === likeBy.toString());
+    
     if (index !== -1) {
       return res.status(400).json({ error: 'Post already liked' });
     }
