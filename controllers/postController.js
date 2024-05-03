@@ -19,17 +19,17 @@ exports.createPost = async (req, res) => {
 exports.likePost = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
-      const newLike = await Like.create(req.body);
-      // check if user has already liked the post
-      const index = post.postLikes.findIndex(like => like.user.toString() === req.body.user);
-      if (index !== -1) {
+    const newLike = await Like.create(req.body);
+    // check if user has already liked the post
+    const index = post.postLikes.findIndex((like) => like.likeBy.toString() === req.body.likeBy);
+    if (index !== -1) {
           return res.status(400).json({ error: 'Post already liked' });
       }
 
       // add like to post
     post.postLikes.push(newLike);
     await post.save();
-    res.status(201).json(newLike);
+    res.status(201).json(post.postLikes);
   } catch (error) {
     res.status(500).json({ error: 'Could not like post' });
   }
