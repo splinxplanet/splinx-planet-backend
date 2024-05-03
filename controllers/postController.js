@@ -19,7 +19,7 @@ exports.createPost = async (req, res) => {
 exports.likePost = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
-    const newLike = await Like.create(req.body);
+    const newLike = await Like.create(req.body.likeBy);
     // check if user has already liked the post
     const index = post.postLikes.findIndex((like) => like.likeBy.toString() === req.body.likeBy);
     if (index !== -1) {
