@@ -16,8 +16,43 @@ exports.createPost = async (req, res) => {
 };
 
 // like a post
+// exports.likePost = async (req, res) => {
+//   try {
+//         const postId = req.params.postId;
+//         const userId = req.body.userId; // Assuming userId is sent in the request body
+        
+//         // Check if the post exists
+//         const post = await Post.findById(postId);
+//         if (!post) {
+//             return res.status(404).json({ message: 'Post not found' });
+//         }
+
+//         // Check if the user has already liked the post
+//         const existingLike = await Like.findOne({ likeBy: userId });
+//         if (existingLike) {
+//             return res.status(400).json({ message: 'You have already liked this post' });
+//         }
+
+//         // Create a new like
+//         const like = new Like({
+//             likeBy: userId
+//         });
+
+//         // Save the like to the database
+//         await like.save();
+
+//         // Add the like to the post
+//         post.postLikes.push(like);
+//         await post.save();
+
+//         return res.status(201).json({ message: 'Post liked successfully' });
+//     } catch (error) {
+//         console.error('Error liking post:', error);
+//         return res.status(500).json({ message: 'Internal server error' });
+//     }
+// };
 exports.likePost = async (req, res) => {
-  try {
+    try {
         const postId = req.params.postId;
         const userId = req.body.userId; // Assuming userId is sent in the request body
         
