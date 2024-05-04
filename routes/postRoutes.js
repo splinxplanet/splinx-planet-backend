@@ -8,7 +8,7 @@ const postController = require('../controllers/postController');
 // create new post
 router.post('/', postController.createPost);
 // like a post
-router.post('/:postId/like', postController.likePost);
+router.put('/:postId/like', postController.likePost);
 // get all post likes
 router.get('/:postId/likes', postController.getPostLikes);
 // get all post by community id
