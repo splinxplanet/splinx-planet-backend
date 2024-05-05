@@ -63,7 +63,7 @@ exports.likePost = async (req, res) => {
         }
 
         // Check if the user has already liked the post
-        const existingLike = await Like.findOne({ likeBy: userId });
+        const existingLike = post.postLikes.find(like => like.likeBy.toString() === userId);
         if (existingLike) {
             return res.status(400).json({ message: 'You have already liked this post' });
         }
@@ -107,6 +107,7 @@ exports.getPostLikes = async (req, res) => {
         return res.status(500).json({ message: 'Internal server error' });
     }
 };
+
 // get all posts in a community
 exports.getPostById = async (req, res) => {
   // get all post that match the community id
