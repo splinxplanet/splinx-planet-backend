@@ -63,7 +63,6 @@ exports.likePost = async (req, res) => {
         }
 
       // Check if the user has already liked the post
-      // testing if the user has already liked the post
         const existingLike = post.postLikes.find(like => like.likeBy.toString() === userId);
         if (existingLike) {
             return res.status(400).json({ message: 'You have already liked this post' });
