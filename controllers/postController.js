@@ -142,6 +142,16 @@ exports.createComment = async (req, res) => {
   }
 };
 
+// get all comments controller
+exports.getComments = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id).populate('comments');
+    res.json(post.comments);
+  } catch (error) {
+    res.status(404).json({ error: 'Comments not found' });
+  }
+};
+
 // delete a comment
 exports.deleteComment = async (req, res) => {
   try {
