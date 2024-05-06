@@ -17,6 +17,8 @@ router.get('/:id', postController.getPostById);
 router.delete('/:id', postController.deletePost);
 // create a new comment
 router.post('/:id/comment', postController.createComment);
+// get all comments
+router.get('/:id/comments', postController.getComments);
 // delete a comment
 router.delete('/:postId/comment/:commentId', postController.deleteComment);
 // create a reply
