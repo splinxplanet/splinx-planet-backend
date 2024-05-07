@@ -23,6 +23,8 @@ router.get('/:id/comments', postController.getComments);
 router.delete('/:postId/comment/:commentId', postController.deleteComment);
 // create a reply
 router.post('/:postId/comment/:commentId/reply', postController.createReply);
+// get all replies
+router.get('/:postId/comment/:commentId/replies', postController.getReplies);
 // delete a reply
 router.delete('/:postId/comment/:commentId/reply/:replyId', postController.deleteReply);
 
