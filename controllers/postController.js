@@ -181,6 +181,16 @@ exports.createReply = async (req, res) => {
   }
 };
 
+// get all comments replies
+exports.getReplies = async (req, res) => {
+  try {
+    const comment = await Comment.findById(req.params.commentId).populate('replies');
+    res.json(comment.replies);
+  } catch (error) {
+    res.status(404).json({ error: 'Replies not found' });
+  }
+};
+
 // delete a reply
 exports.deleteReply = async (req, res) => {
   try {
