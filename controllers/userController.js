@@ -70,9 +70,9 @@ exports.updateUserProfile = async (req, res) => {
 // change password
 exports.changePassword = async (req, res) => {
   const { userId } = req.params;
-  const { oldPassword, newPassword } = req.body;
+  const { emailAddress, newPassword } = req.body;
 
-  if (!oldPassword || !newPassword) {
+  if (!emailAddress || !newPassword) {
     return res.status(400).send("Old password and new password are required.");
   }
 
@@ -82,9 +82,9 @@ exports.changePassword = async (req, res) => {
       return res.status(404).send("User not found.");
     }
 
-    const isMatch = await bcrypt.compare(oldPassword, user.password);
-    if (!isMatch) {
-      return res.status(400).send("Old password is incorrect.");
+    // check if email match user email
+    if (emailAddress !== user.emailAddress) {
+      return res.status(400).send("Email address doesn't exist")
     }
 
     const salt = await bcrypt.genSalt(10);
