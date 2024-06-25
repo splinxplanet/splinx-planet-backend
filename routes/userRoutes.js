@@ -12,6 +12,9 @@ router.get("/get-all-users", authenticationToken, userController.getAllUsersProf
 // Update user profile
 router.put("/update-user/:userId", authenticationToken, userController.updateUserProfile);
 
+// change password
+router.put("/change-password/:userId", authenticationToken, userController.changePassword);
+
 // Delete user profile
 router.delete("/delete-user/:userId", authenticationToken, userController.deleteUserProfile);
 
@@ -35,5 +38,11 @@ router.get("/friends/:userId", authenticationToken, userController.getUserFriend
 
 // get all users
 router.get("/all-users/:userId", authenticationToken, userController.getAllUsers);
+
+// add new notification
+router.post("/notification/:userId", authenticationToken, userController.postNotification);
+
+// read notification
+router.put("/notification/:userId", authenticationToken, userController.getNotifications);
 
 module.exports = router;

@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema({
   bio: String,
   profileImg: String,
   phoneNumber: String,
+
   emailAddress: {
         type: String,
         required: true,
@@ -24,7 +25,33 @@ const userSchema = new mongoose.Schema({
   enableNotification: {
         type: Boolean,
         default: false,
+  },
+  enableSmsNotification: {
+    type: Boolean,
+    default: false,
+  },
+  enableEmailNotification: {
+    type: Boolean,
+    default: false,
+  },
+  notifications: [
+    {
+      title: String,
+      message: String,
+      read: {
+        type: Boolean,
+        default: false,
+      },
+      date: {
+        type: Date,
+        default: Date.now,
+      },
     },
+  ],
+  isSubscriber: {
+    type: Boolean,
+    default: false,
+  },
   myInterest: [{
       id: String,
       interest: String,
