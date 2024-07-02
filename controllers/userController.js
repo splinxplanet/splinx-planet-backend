@@ -32,10 +32,110 @@ exports.getAllUsersProfile = async (req, res) => {
 
 // Update user profile
 exports.updateUserProfile = async (req, res) => {
-    await User.findByIdAndUpdate(req.params.userId, req.body);
+  const { userId } = req.params;
+  const {
+    emailAddress,
+    enableNotification,
+    enableSmsNotification,
+    enableEmailNotification,
+    userName
+  } = req.body;
 
-    res.json({ message: "User profile updated successfully" });
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+
+    // Update the fields if they are provided in the request body
+    if (emailAddress !== undefined) user.emailAddress = emailAddress;
+    if (enableNotification !== undefined) user.enableNotification = enableNotification;
+    if (enableSmsNotification !== undefined) user.enableSmsNotification = enableSmsNotification;
+    if (enableEmailNotification !== undefined) user.enableEmailNotification = enableEmailNotification;
+    if (userName !== undefined) {
+      const [firstName, lastName] = userName.split(" ");
+      user.firstName = firstName;
+      user.lastName = lastName || "";
+    }
+
+    await user.save();
+
+    // res.status(200).send(user);
+    res.status(200).json({ message: "User profile updated successfully" });
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
 }
+
+// change password
+exports.changePassword = async (req, res) => {
+  const { userId } = req.params;
+  const { emailAddress, newPassword } = req.body;
+
+  if (!emailAddress || !newPassword) {
+    return res.status(400).send("Old password and new password are required.");
+  }
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).send("User not found.");
+    }
+
+    // check if email match user email
+    if (emailAddress !== user.emailAddress) {
+      return res.status(400).send("Email address doesn't exist")
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(newPassword, salt);
+    await user.save();
+
+    res.status(200).send("Password changed successfully.");
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
+
+// add new notifications
+exports.postNotification = async (req, res) => {
+  const { userId } = req.params;
+  const { title, message } = req.body;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+
+    const newNotification = {
+      title,
+      message,
+    };
+
+    user.notifications.push(newNotification);
+    await user.save();
+
+    res.status(200).send(user.notifications);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
+
+exports.getNotifications = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+
+    res.status(200).send(user.notifications);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
 
 // Delete user profile
 exports.deleteUserProfile = async (req, res) => {
