@@ -8,6 +8,7 @@ const eventRoutes = require("./routes/eventRoutes");
 const messageRoutes = require("./routes/messageRoutes");
 const communityRoutes = require("./routes/communityRoutes");
 const postRoutes = require("./routes/postRoutes");
+const sendEmail = require("./routes/emailSender");
 
 // dotenv config
 require("dotenv").config();
@@ -36,6 +37,7 @@ mongoose
     app.use("/message", messageRoutes); // use message routes
     app.use("/community", communityRoutes); // use community routes
     app.use("/post", postRoutes); // use post routes
+    app.use("/email", sendEmail); // use email routes
 
     app.listen(PORT, () => {
       console.log(`👌✨Server running at http://localhost:${PORT}`);
