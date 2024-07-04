@@ -73,25 +73,25 @@ exports.changePassword = async (req, res) => {
   const { emailAddress, newPassword } = req.body;
 
   if (!emailAddress || !newPassword) {
-    return res.status(400).send("Old password and new password are required.");
+    return res.status(400).send("Old email address and new password are required.");
   }
 
   try {
     const user = await User.findById(userId);
     if (!user) {
-      return res.status(404).send("User not found.");
+      return res.status(404).send({message: "User not found."});
     }
 
     // check if email match user email
     if (emailAddress !== user.emailAddress) {
-      return res.status(400).send("Email address doesn't exist")
+      return res.status(400).send({message: "Email address doesn't exist"})
     }
 
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(newPassword, salt);
     await user.save();
 
-    res.status(200).send("Password changed successfully.");
+    res.status(200).send({message: "Password changed successfully."});
   } catch (error) {
     res.status(500).send(error.message);
   }
