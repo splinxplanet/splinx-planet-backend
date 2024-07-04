@@ -3,6 +3,7 @@ const router = express.Router();
 const nodemailer = require('nodemailer');
 
 const password = process.env.EMAIL_PASSWORD;
+
 router.post('/send-email', async (req, res) => {
 
     const { email, subject, html } = req.body;
