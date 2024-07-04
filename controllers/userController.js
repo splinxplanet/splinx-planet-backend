@@ -1,6 +1,5 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 
 // Get user profile
 exports.getUserProfile = async (req, res) => {
