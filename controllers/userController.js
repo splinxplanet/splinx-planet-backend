@@ -35,6 +35,7 @@ exports.updateUserProfile = async (req, res) => {
   const { userId } = req.params;
   const {
     emailAddress,
+    profileImg,
     enableNotification,
     enableSmsNotification,
     enableEmailNotification,
@@ -49,6 +50,7 @@ exports.updateUserProfile = async (req, res) => {
 
     // Update the fields if they are provided in the request body
     if (emailAddress !== undefined) user.emailAddress = emailAddress;
+    if (profileImg !== undefined) user.profileImg = profileImg;
     if (enableNotification !== undefined) user.enableNotification = enableNotification;
     if (enableSmsNotification !== undefined) user.enableSmsNotification = enableSmsNotification;
     if (enableEmailNotification !== undefined) user.enableEmailNotification = enableEmailNotification;
