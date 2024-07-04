@@ -31,15 +31,62 @@ exports.getAllUsersProfile = async (req, res) => {
 };
 
 // Update user profile
+// exports.updateUserProfile = async (req, res) => {
+//   const { userId } = req.params;
+//   const {
+//     emailAddress,
+//     profileImg,
+//     enableNotification,
+//     enableSmsNotification,
+//     enableEmailNotification,
+//     userName
+//   } = req.body;
+
+//   try {
+//     const user = await User.findById(userId);
+//     if (!user) {
+//       return res.status(404).send("User not found");
+//     }
+
+//     // Update the fields if they are provided in the request body
+//     if (emailAddress !== undefined) user.emailAddress = emailAddress;
+//     if (profileImg !== undefined) user.profileImg = profileImg;
+//     if (enableNotification !== undefined) user.enableNotification = enableNotification;
+//     if (enableSmsNotification !== undefined) user.enableSmsNotification = enableSmsNotification;
+//     if (enableEmailNotification !== undefined) user.enableEmailNotification = enableEmailNotification;
+//     if (userName !== undefined) {
+//       const [firstName, lastName] = userName.split(" ");
+//       user.firstName = firstName;
+//       user.lastName = lastName || "";
+//     }
+
+//     await user.save();
+
+//     // res.status(200).send(user);
+//     res.status(200).json({ message: "User profile updated successfully" });
+//   } catch (error) {
+//     res.status(500).send(error.message);
+//   }
+// }
 exports.updateUserProfile = async (req, res) => {
   const { userId } = req.params;
   const {
-    emailAddress,
+    firstName,
+    lastName,
+    dob,
+    age,
+    bio,
     profileImg,
+    phoneNumber,
+    country,
+    city,
+    homeAddress,
     enableNotification,
     enableSmsNotification,
     enableEmailNotification,
-    userName
+    isSubscriber,
+    myInterest,
+    hashtagFollowing
   } = req.body;
 
   try {
@@ -49,25 +96,28 @@ exports.updateUserProfile = async (req, res) => {
     }
 
     // Update the fields if they are provided in the request body
-    if (emailAddress !== undefined) user.emailAddress = emailAddress;
+    if (firstName !== undefined) user.firstName = firstName;
+    if (lastName !== undefined) user.lastName = lastName;
+    if (dob !== undefined) user.dob = dob;
+    if (age !== undefined) user.age = age;
+    if (bio !== undefined) user.bio = bio;
     if (profileImg !== undefined) user.profileImg = profileImg;
+    if (phoneNumber !== undefined) user.phoneNumber = phoneNumber;
+    if (country !== undefined) user.country = country;
+    if (city !== undefined) user.city = city;
+    if (homeAddress !== undefined) user.homeAddress = homeAddress;
     if (enableNotification !== undefined) user.enableNotification = enableNotification;
     if (enableSmsNotification !== undefined) user.enableSmsNotification = enableSmsNotification;
     if (enableEmailNotification !== undefined) user.enableEmailNotification = enableEmailNotification;
-    if (userName !== undefined) {
-      const [firstName, lastName] = userName.split(" ");
-      user.firstName = firstName;
-      user.lastName = lastName || "";
-    }
+    if (isSubscriber !== undefined) user.isSubscriber = isSubscriber;
 
     await user.save();
 
-    // res.status(200).send(user);
     res.status(200).json({ message: "User profile updated successfully" });
   } catch (error) {
     res.status(500).send(error.message);
   }
-}
+};
 
 // change password
 exports.changePassword = async (req, res) => {
@@ -75,29 +125,30 @@ exports.changePassword = async (req, res) => {
   const { emailAddress, newPassword } = req.body;
 
   if (!emailAddress || !newPassword) {
-    return res.status(400).send("Old email address and new password are required.");
+    return res.status(400).json({ message: "Old email address and new password are required." });
   }
 
   try {
     const user = await User.findById(userId);
     if (!user) {
-      return res.status(404).send({message: "User not found."});
+      return res.status(404).json({ message: "User not found." });
     }
 
-    // check if email match user email
+    // check if email matches user email
     if (emailAddress !== user.emailAddress) {
-      return res.status(400).send({message: "Email address doesn't exist"})
+      return res.status(400).json({ message: "Email address doesn't exist" });
     }
 
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(newPassword, salt);
     await user.save();
 
-    res.status(200).send({message: "Password changed successfully."});
+    res.status(200).json({ message: "Password changed successfully." });
   } catch (error) {
-    res.status(500).send(error.message);
+    res.status(500).json({ message: error.message });
   }
 };
+
 
 // add new notifications
 exports.postNotification = async (req, res) => {
