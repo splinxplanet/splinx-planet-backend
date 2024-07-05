@@ -32,43 +32,6 @@ exports.getAllUsersProfile = async (req, res) => {
 };
 
 // Update user profile
-// exports.updateUserProfile = async (req, res) => {
-//   const { userId } = req.params;
-//   const {
-//     emailAddress,
-//     profileImg,
-//     enableNotification,
-//     enableSmsNotification,
-//     enableEmailNotification,
-//     userName
-//   } = req.body;
-
-//   try {
-//     const user = await User.findById(userId);
-//     if (!user) {
-//       return res.status(404).send("User not found");
-//     }
-
-//     // Update the fields if they are provided in the request body
-//     if (emailAddress !== undefined) user.emailAddress = emailAddress;
-//     if (profileImg !== undefined) user.profileImg = profileImg;
-//     if (enableNotification !== undefined) user.enableNotification = enableNotification;
-//     if (enableSmsNotification !== undefined) user.enableSmsNotification = enableSmsNotification;
-//     if (enableEmailNotification !== undefined) user.enableEmailNotification = enableEmailNotification;
-//     if (userName !== undefined) {
-//       const [firstName, lastName] = userName.split(" ");
-//       user.firstName = firstName;
-//       user.lastName = lastName || "";
-//     }
-
-//     await user.save();
-
-//     // res.status(200).send(user);
-//     res.status(200).json({ message: "User profile updated successfully" });
-//   } catch (error) {
-//     res.status(500).send(error.message);
-//   }
-// }
 exports.updateUserProfile = async (req, res) => {
   const { userId } = req.params;
   const {
@@ -343,5 +306,64 @@ exports.getAllUsers = async (req, res) => {
   } catch (err) {
     console.error("Error retrieving users", err);
     res.status(500).json({ message: "Error retrieving users" });
+  }
+};
+
+// restricted account operation endpoint
+// add user to restricted account
+exports.addToRestrictedAccount = async (req, res) => {
+  const { userId, restrictedUserId } = req.body;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+
+    if (!user.restrictedAccount.includes(restrictedUserId)) {
+      user.restrictedAccount.push(restrictedUserId);
+      await user.save();
+    }
+
+    res.status(200).send("User added to restricted account list");
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
+
+// remove user from restricted account
+exports.removeFromRestrictedAccount = async (req, res) => {
+  const { userId, restrictedUserId } = req.body;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+
+    user.restrictedAccount = user.restrictedAccount.filter(
+      (id) => id.toString() !== restrictedUserId
+    );
+    await user.save();
+
+    res.status(200).send("User removed from restricted account list");
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
+
+// fetch all restricted accounts info data
+exports.fetchRestrictedAccounts = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const user = await User.findById(userId).populate("restrictedAccount", "firstName lastName emailAddress profileImg");
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+
+    res.status(200).json(user.restrictedAccount);
+  } catch (error) {
+    res.status(500).send(error.message);
   }
 };

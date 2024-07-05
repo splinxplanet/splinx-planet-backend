@@ -45,4 +45,14 @@ router.post("/notification/:userId", authenticationToken, userController.postNot
 // read notification
 router.put("/notification/:userId", authenticationToken, userController.getNotifications);
 
+// restricted account api
+// add restricted account
+router.post("/restricted-account", authenticationToken, userController.addToRestrictedAccount);
+
+// remove restricted account
+router.post("/remove-restricted-account", authenticationToken, userController.removeFromRestrictedAccount);
+
+// get all restricted account
+router.get("/get-restricted-account", authenticationToken, userController.fetchRestrictedAccounts);
+
 module.exports = router;
