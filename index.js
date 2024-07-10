@@ -9,6 +9,9 @@ const messageRoutes = require("./routes/messageRoutes");
 const communityRoutes = require("./routes/communityRoutes");
 const postRoutes = require("./routes/postRoutes");
 const sendEmail = require("./routes/emailSender");
+// import flutterwave plan
+const flutterwaveRoutes = require("./routes/flutterwaveRoutes");
+const { createMonthlyPlan, createSixMonthlyPlan, createYearlyPlan, createBallersPlan } = require("./flutterwave/flutterwavePlan");
 
 // dotenv config
 require("dotenv").config();
@@ -31,6 +34,21 @@ mongoose
     //     origin: "https://example.com"
     // }));
 
+    // // call flutter-wave function
+    // createMonthlyPlan();
+    // createSixMonthlyPlan();
+    // createYearlyPlan();
+    // createBallersPlan();
+    // Call plan creation functions on server start
+    const initializePlans = async () => {
+      await createMonthlyPlan();
+      await createSixMonthlyPlan();
+      await createYearlyPlan();
+      await createBallersPlan();
+    };
+
+    initializePlans();
+
     app.use("/auth", authRoutes); // Use auth routes
     app.use("/user", userRoutes); // Use user routes
     app.use("/event", eventRoutes); // Use event routes
@@ -38,6 +56,8 @@ mongoose
     app.use("/community", communityRoutes); // use community routes
     app.use("/post", postRoutes); // use post routes
     app.use("/email", sendEmail); // use email routes
+    // use flutterwave routes
+    app.use("/flw-api", flutterwaveRoutes);
 
     app.listen(PORT, () => {
       console.log(`👌✨Server running at http://localhost:${PORT}`);
