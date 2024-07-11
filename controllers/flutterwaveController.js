@@ -2,6 +2,26 @@ const Flutterwave = require('flutterwave-node-v3');
 const flw = new Flutterwave(process.env.FLW_PUBLIC_KEY, process.env.FLW_SECRET_KEY);
 
 
+// create subscription plans
+exports.createPlan = async (req, res) => { 
+  console.log("Create new plans")
+
+  try {
+    const { name, amount, interval, currency } = req.body;
+
+    const payload = {
+      name,
+      amount,
+      interval,
+      currency
+    };
+    const response = await flw.PaymentPlan.create(payload);
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 // fetch all plans
 exports.fetchAllPlans = async (req, res) => {
   try {

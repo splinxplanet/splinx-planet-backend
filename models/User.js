@@ -91,6 +91,10 @@ const userSchema = new mongoose.Schema({
       ref: "User",
     },
   ],
+  subscription: {
+    type: Object,
+    default: {},
+  },
 },
     { timestamps: true }
 );

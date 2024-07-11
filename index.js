@@ -11,7 +11,7 @@ const postRoutes = require("./routes/postRoutes");
 const sendEmail = require("./routes/emailSender");
 // import flutterwave plan
 const flutterwaveRoutes = require("./routes/flutterwaveRoutes");
-const { createMonthlyPlan, createSixMonthlyPlan, createYearlyPlan, createBallersPlan } = require("./flutterwave/flutterwavePlan");
+
 
 // dotenv config
 require("dotenv").config();
@@ -33,21 +33,6 @@ mongoose
     // app.use(cors({
     //     origin: "https://example.com"
     // }));
-
-    // // call flutter-wave function
-    // createMonthlyPlan();
-    // createSixMonthlyPlan();
-    // createYearlyPlan();
-    // createBallersPlan();
-    // Call plan creation functions on server start
-    const initializePlans = async () => {
-      await createMonthlyPlan();
-      await createSixMonthlyPlan();
-      await createYearlyPlan();
-      await createBallersPlan();
-    };
-
-    initializePlans();
 
     app.use("/auth", authRoutes); // Use auth routes
     app.use("/user", userRoutes); // Use user routes

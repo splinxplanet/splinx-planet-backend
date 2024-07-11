@@ -2,6 +2,9 @@ const express = require("express");
 const router = express.Router();
 const flutterwaveController = require("../controllers/flutterwaveController");
 
+// Create Subscription Plan
+router.post("/create-plan", flutterwaveController.createPlan);
+
 // Fetch all plans
 router.get("/fetch-all-plans", flutterwaveController.fetchAllPlans);
 
