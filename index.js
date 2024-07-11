@@ -9,6 +9,9 @@ const messageRoutes = require("./routes/messageRoutes");
 const communityRoutes = require("./routes/communityRoutes");
 const postRoutes = require("./routes/postRoutes");
 const sendEmail = require("./routes/emailSender");
+// import flutterwave plan
+const flutterwaveRoutes = require("./routes/flutterwaveRoutes");
+
 
 // dotenv config
 require("dotenv").config();
@@ -38,6 +41,8 @@ mongoose
     app.use("/community", communityRoutes); // use community routes
     app.use("/post", postRoutes); // use post routes
     app.use("/email", sendEmail); // use email routes
+    // use flutterwave routes
+    app.use("/flw-api", flutterwaveRoutes);
 
     app.listen(PORT, () => {
       console.log(`👌✨Server running at http://localhost:${PORT}`);
