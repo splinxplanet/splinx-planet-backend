@@ -4,8 +4,6 @@ const flw = new Flutterwave(process.env.FLW_PUBLIC_KEY, process.env.FLW_SECRET_K
 
 // create subscription plans
 exports.createPlan = async (req, res) => { 
-  console.log("Create new plans")
-
   try {
     const { name, amount, interval, currency } = req.body;
 
@@ -71,6 +69,43 @@ exports.getSubscriptionDetails = async (req, res) => {
     };
     const response = await flw.Subscription.get(data);
     res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Create payment endpoint
+exports.createPayment = async (req, res) => {
+  const { amount, currency, email, name, phonenumber, description, payment_plan } = req.body;
+  const tx_ref = `tx-${Date.now()}`;
+
+  try {
+    const response = await fetch('https://api.flutterwave.com/v3/payments', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.FLW_SECRET_KEY}`
+      },
+      body: JSON.stringify({
+        tx_ref,
+        amount,
+        payment_plan,
+        currency,
+        redirect_url: 'https://your-app.com/payment-success',
+        customer: {
+          email,
+          name,
+          phonenumber
+        },
+        customizations: {
+          title: 'Splinx-Planet Subscription Payment',
+          description
+        }
+      })
+    });
+
+    const data = await response.json();
+    res.json(data);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
