@@ -18,4 +18,7 @@ router.post("/cancel-subscription", flutterwaveController.cancelSubscription);
 // Get User Subscription Details
 router.get("/subscription-details/:email", flutterwaveController.getSubscriptionDetails);
 
+// Create payment route
+router.post("/create-payment", flutterwaveController.createPayment);
+
 module.exports = router;
