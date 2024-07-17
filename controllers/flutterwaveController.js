@@ -105,8 +105,31 @@ exports.createPayment = async (req, res) => {
     });
 
     const data = await response.json();
-    res.json(data);
+    res.status(200).json(data);
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+};
+
+
+// transaction verification
+exports.verifyTransaction = async (req, res) => {
+  const { tx_ref } = req.body;
+
+  if (!tx_ref) {
+    return res.status(400).json({ message: 'Transaction reference (tx_ref) is required' });
+  }
+
+  try {
+    const payload = { "tx_ref": tx_ref };
+    const response = await flw.Transaction.verify(payload);
+
+    if (response.status === 'success') {
+      return res.status(200).json({ message: 'Transaction verified successfully', data: response.data });
+    } else {
+      return res.status(400).json({ message: 'Transaction verification failed', data: response.data });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 };

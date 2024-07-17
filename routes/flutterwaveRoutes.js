@@ -21,4 +21,7 @@ router.get("/subscription-details/:email", flutterwaveController.getSubscription
 // Create payment route
 router.post("/create-payment", flutterwaveController.createPayment);
 
+// verify transaction hooks
+router.post("/verify-transaction", flutterwaveController.verifyTransaction);
+
 module.exports = router;

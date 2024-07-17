@@ -14,14 +14,61 @@ exports.createEvent = async (req, res) => {
 };
 
 // update event
+const Event = require('../models/Event');
+
 exports.updateEvent = async (req, res) => {
+  const { eventId } = req.params;
+  const {
+    eventName,
+    eventDescription,
+    eventImage,
+    eventDate,
+    eventTime,
+    eventLocation,
+    eventUserRules,
+    eventCreator,
+    eventCost,
+    isEventCostSplitted,
+    eventCategory,
+    eventHashtag,
+    isPopular,
+    isUpcoming,
+    isOpen,
+    eventMembers
+  } = req.body;
+
   try {
-    const event = await Event.findByIdAndUpdate(req.params.eventId, req.body, { new: true });
-    res.status(200).json({ event });
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).send("Event not found");
+    }
+
+    // Update the fields if they are provided in the request body
+    if (eventName !== undefined) event.eventName = eventName;
+    if (eventDescription !== undefined) event.eventDescription = eventDescription;
+    if (eventImage !== undefined) event.eventImage = eventImage;
+    if (eventDate !== undefined) event.eventDate = eventDate;
+    if (eventTime !== undefined) event.eventTime = eventTime;
+    if (eventLocation !== undefined) event.eventLocation = eventLocation;
+    if (eventUserRules !== undefined) event.eventUserRules = eventUserRules;
+    if (eventCreator !== undefined) event.eventCreator = eventCreator;
+    if (eventCost !== undefined) event.eventCost = eventCost;
+    if (isEventCostSplitted !== undefined) event.isEventCostSplitted = isEventCostSplitted;
+    if (eventCategory !== undefined) event.eventCategory = eventCategory;
+    if (eventHashtag !== undefined) event.eventHashtag = eventHashtag;
+    if (isPopular !== undefined) event.isPopular = isPopular;
+    if (isUpcoming !== undefined) event.isUpcoming = isUpcoming;
+    if (isOpen !== undefined) event.isOpen = isOpen;
+    if (eventMembers !== undefined) event.eventMembers = eventMembers;
+
+    await event.save();
+
+    res.status(200).json({ message: "Event updated successfully", event });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(500).send(error.message);
   }
 };
+
 
 // delete an event
 exports.deleteEvent = async (req, res) => {
@@ -125,5 +172,43 @@ exports.inviteUsersToEvent = async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+// Split event cost
+exports.splitCost = async (req, res) => {
+  const { eventId } = req.params;
+  const { splitPercentages } = req.body; // Object with memberId as key and percentage as value
+
+  try {
+    const event = await Event.findById(eventId);
+
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+
+    const totalCost = event.eventCost;
+    const eventMembers = event.eventMembers;
+
+    // Validate split percentages
+    const totalPercentage = Object.values(splitPercentages).reduce((acc, percentage) => acc + percentage, 0);
+    if (totalPercentage !== 100) {
+      return res.status(400).json({ message: 'Total split percentages must equal 100%' });
+    }
+
+    // Update each member's split cost
+    eventMembers.forEach(member => {
+      const percentage = splitPercentages[member.user.toString()];
+      if (percentage) {
+        member.splitCost = (totalCost * percentage) / 100;
+        member.paymentStatus = 'pending';
+      }
+    });
+
+    await event.save();
+    res.status(200).json({ message: 'Event cost split successfully', event });
+
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', error });
   }
 };
