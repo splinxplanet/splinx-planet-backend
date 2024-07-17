@@ -210,3 +210,27 @@ exports.splitCost = async (req, res) => {
     res.status(500).json({ message: 'Internal server error', error });
   }
 };
+
+// get all events created by a user
+exports.getEventsByUser = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    // Validate userId
+    if (!mongoose.isValidObjectId(userId)) {
+      return res.status(400).json({ message: 'Invalid userId' });
+    }
+
+    // Find all events where the eventCreator matches the userId
+    const events = await Event.find({ eventCreator: userId });
+
+    if (!events.length) {
+      return res.status(404).json({ message: 'No events found for this user' });
+    }
+
+    res.status(200).json({ events });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+

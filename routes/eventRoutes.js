@@ -25,6 +25,9 @@ router.post('/:eventId/register', authenticationToken,  eventController.register
 // Invite app users to register for an event
 router.post('/:eventId/invite', authenticationToken, eventController.inviteUsersToEvent);
 
+// Get all events created by a user
+router.get('/user-events/:userId', eventController.getEventsByUser);
+
 // split event cost among members
 router.post('/split-cost/:eventId', authenticationToken, eventController.splitCost);
 
