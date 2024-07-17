@@ -23,6 +23,9 @@ router.get('/:eventId', authenticationToken,  eventController.getEvent);
 router.post('/:eventId/register', authenticationToken,  eventController.registerForEvent);
 
 // Invite app users to register for an event
-router.post('/:eventId/invite',  authenticationToken,  eventController.inviteUsersToEvent);
+router.post('/:eventId/invite', authenticationToken, eventController.inviteUsersToEvent);
+
+// split event cost among members
+router.post('/split-cost/:eventId', authenticationToken, eventController.splitCost);
 
 module.exports = router;

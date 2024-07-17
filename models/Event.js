@@ -3,7 +3,9 @@ const mongoose = require('mongoose');
 // Define a schema for event members
 const eventMemberSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  isAllowReminder: { type: Boolean, default: true }
+  isAllowReminder: { type: Boolean, default: true },
+  splitCost: { type: Number, required: true }, // Add field for split cost
+  paymentStatus: { type: String, enum: ['pending', 'paid', 'declined'], default: 'pending' } // Add field for payment status
 });
 
 const eventSchema = new mongoose.Schema({
@@ -16,6 +18,10 @@ const eventSchema = new mongoose.Schema({
   eventUserRules: String,
   eventCreator: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   eventCost: Number,
+  isEventCostSplitted: {
+    type: Boolean,
+    default: false
+  },
   eventCategory: String,
   eventHashtag: String,
   isPopular: { type: Boolean, default: false },
