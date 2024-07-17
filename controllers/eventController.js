@@ -14,8 +14,6 @@ exports.createEvent = async (req, res) => {
 };
 
 // update event
-const Event = require('../models/Event');
-
 exports.updateEvent = async (req, res) => {
   const { eventId } = req.params;
   const {
