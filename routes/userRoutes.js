@@ -56,6 +56,6 @@ router.post("/remove-restricted-account", authenticationToken, userController.re
 router.get("/get-restricted-account/:userId", authenticationToken, userController.fetchRestrictedAccounts);
 
 // fetch users info by ids
-router.get("/fetch-users-info", authenticationToken, userController.fetchUsersById);
+router.get("/fetch-users-info", userController.fetchUsersById);
 
 module.exports = router;
