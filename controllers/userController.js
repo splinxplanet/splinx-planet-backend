@@ -369,3 +369,23 @@ exports.fetchRestrictedAccounts = async (req, res) => {
     res.status(500).send(error.message);
   }
 };
+
+// accept an array of user id and fetch info data
+exports.fetchUsersById = async (req, res) => {
+  try {
+    const { userIds } = req.body; // assuming userIds is sent in the request body
+
+    if (!Array.isArray(userIds) || userIds.length === 0) {
+      return res.status(400).json({ message: 'Invalid input, expected an array of user IDs' });
+    }
+
+    const users = await User.find(
+      { _id: { $in: userIds } },
+      'firstName profileImg emailAddress'
+    );
+
+    res.status(200).json({ users });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
