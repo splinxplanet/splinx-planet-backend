@@ -203,6 +203,9 @@ exports.splitCost = async (req, res) => {
       }
     });
 
+    // update isEventCostSplitted to true
+    event.isEventCostSplitted = true;
+
     await event.save();
     res.status(200).json({ message: 'Event cost split successfully', event });
 
