@@ -144,6 +144,26 @@ exports.forgotPassword = async (req, res) => {
   }
 };
 
+// verify user email
+exports.verifyEmail = async (req, res) => {
+  const { emailAddress } = req.body;
+
+  if (!emailAddress) {
+    return res.status(400).json({ message: "Email address is required." });
+  }
+
+  try {
+    const user = await User.findOne({ emailAddress });
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    } else {
+      return res.status(200).json({ message: "User found" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 
 // add new notifications
 exports.postNotification = async (req, res) => {
