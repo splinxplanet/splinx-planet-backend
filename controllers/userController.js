@@ -146,7 +146,7 @@ exports.forgotPassword = async (req, res) => {
 
 // verify user email
 exports.verifyEmail = async (req, res) => {
-  const { emailAddress } = req.body;
+  const { emailAddress } = req.params;
 
   if (!emailAddress) {
     return res.status(400).json({ message: "Email address is required." });
