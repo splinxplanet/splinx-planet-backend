@@ -115,6 +115,55 @@ exports.changePassword = async (req, res) => {
   }
 };
 
+// forgot password
+exports.forgotPassword = async (req, res) => {
+  const { emailAddress, newPassword } = req.body;
+
+  if (!emailAddress || !newPassword) {
+    return res.status(400).json({ message: "Old email address and new password are required." });
+  }
+
+  try {
+    const user = await User.findOne({ emailAddress });
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    // check if email matches user email
+    if (emailAddress !== user.emailAddress) {
+      return res.status(400).json({ message: "Email address doesn't exist" });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(newPassword, salt);
+    await user.save();
+
+    res.status(200).json({ message: "Password changed successfully." });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// verify user email
+exports.verifyEmail = async (req, res) => {
+  const { emailAddress } = req.body;
+
+  if (!emailAddress) {
+    return res.status(400).json({ message: "Email address is required." });
+  }
+
+  try {
+    const user = await User.findOne({ emailAddress });
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    } else {
+      return res.status(200).json({ message: "User found" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 
 // add new notifications
 exports.postNotification = async (req, res) => {

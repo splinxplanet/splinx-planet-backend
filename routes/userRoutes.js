@@ -15,6 +15,12 @@ router.put("/update-user/:userId", authenticationToken, userController.updateUse
 // change password
 router.put("/change-password/:userId", authenticationToken, userController.changePassword);
 
+// forgot password
+router.put("/forgot-password", userController.forgotPassword);
+
+// verify user email
+router.post("/verify-email", userController.verifyEmail);
+
 // Delete user profile
 router.delete("/delete-user/:userId", authenticationToken, userController.deleteUserProfile);
 
