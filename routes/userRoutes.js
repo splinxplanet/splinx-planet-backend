@@ -19,7 +19,7 @@ router.put("/change-password/:userId", authenticationToken, userController.chang
 router.put("/forgot-password", userController.forgotPassword);
 
 // verify user email
-router.post("/verify-email/:emailAddress", userController.verifyEmail);
+router.get("/verify-email/:emailAddress", userController.verifyEmail);
 
 // Delete user profile
 router.delete("/delete-user/:userId", authenticationToken, userController.deleteUserProfile);
