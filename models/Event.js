@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const eventMemberSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   isAllowReminder: { type: Boolean, default: true },
-  splitCost: { type: Number, required: true }, // Add field for split cost
+  splitCost: { type: Number, required: true, default: 0}, // Add field for split cost
   paymentStatus: { type: String, enum: ['pending', 'paid', 'declined'], default: 'pending' } // Add field for payment status
 });
 
