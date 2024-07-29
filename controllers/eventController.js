@@ -127,8 +127,14 @@ exports.registerForEvent = async (req, res) => {
       return res.status(400).json({ message: 'User already registered for the event' });
     }
 
-    // Register the user for the event and set isAllowReminder
-    event.eventMembers.push({ user: userId, isAllowReminder });
+    // Determine the splitCost value
+    let splitCost = 0;
+    if (event.isEventCostSplitted) {
+      splitCost = event.eventCost / (event.eventMembers.length + 1); // Adjust according to your splitting logic
+    }
+
+    // Register the user for the event and set isAllowReminder and splitCost
+    event.eventMembers.push({ user: userId, isAllowReminder, splitCost });
     await event.save();
 
     res.status(200).json({ message: 'User registered for the event successfully' });
@@ -136,6 +142,7 @@ exports.registerForEvent = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
 
 // Invite users
 exports.inviteUsersToEvent = async (req, res) => {
