@@ -11,7 +11,7 @@ const eventMemberSchema = new mongoose.Schema({
 const eventSchema = new mongoose.Schema({
   eventName: { type: String, required: true },
   eventDescription: { type: String, required: true },
-  eventImage: String,
+  eventImage: { type: String, default: "https://img.freepik.com/free-photo/medium-shot-people-with-vr-glasses_23-2150433375.jpg?t=st=1708723420~exp=1708727020~hmac=9096dbce4e7a09ca0c3d54e14edff136a83b68c1bbceb01e22626488aa8ca9db&w=740"},
   eventDate: { type: Date, required: true },
   eventTime: { type: String, required: true },
   eventLocation: { type: String, required: true },
