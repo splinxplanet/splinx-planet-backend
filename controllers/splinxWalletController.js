@@ -16,6 +16,12 @@ exports.createWallet = async (req, res) => {
       await newWallet.save();
       
     res.status(201).json(newWallet);
+
+    // update user isWalletCreated to true and walletAccountNumber to lastTenDigits
+    user.isWalletCreated = true;
+    user.walletAccountNumber = lastTenDigits;
+    await user.save();
+    
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
