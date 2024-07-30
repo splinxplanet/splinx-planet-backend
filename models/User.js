@@ -52,6 +52,10 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  isWalletCreated: {
+    type: Boolean,
+    default: false,
+  },
   myInterest: [{
       id: String,
       interest: String,

@@ -3,14 +3,18 @@ const User = require('../models/User');
 
 // Create Wallet Account
 exports.createWallet = async (req, res) => {
+    const { id } = req.params;
   try {
-    const user = await User.findById(req.user._id); // Assuming user is authenticated
+      const user = await User.findById(id); 
+      
     const lastTenDigits = user.phoneNumber.slice(-10);
     const newWallet = new Wallet({
-      user: user._id,
+      user: id,
       accountNumber: lastTenDigits,
     });
-    await newWallet.save();
+      
+      await newWallet.save();
+      
     res.status(201).json(newWallet);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -19,9 +23,10 @@ exports.createWallet = async (req, res) => {
 
 // Fund Wallet
 exports.fundWallet = async (req, res) => {
+    const { id } = req.params;
   try {
     const { amount } = req.body;
-    const wallet = await Wallet.findOne({ user: req.user._id });
+    const wallet = await Wallet.findOne({ user: id });
     wallet.balance += amount;
     wallet.transactions.push({
       type: 'FUND',
@@ -37,9 +42,10 @@ exports.fundWallet = async (req, res) => {
 
 // Transfer Funds
 exports.transferFunds = async (req, res) => {
+    const { id } = req.params;
   try {
     const { toAccountNumber, amount } = req.body;
-    const senderWallet = await Wallet.findOne({ user: req.user._id });
+    const senderWallet = await Wallet.findOne({ user: id });
     const receiverWallet = await Wallet.findOne({ accountNumber: toAccountNumber });
 
     if (senderWallet.balance < amount) {
@@ -96,8 +102,9 @@ exports.makePayment = async (req, res) => {
 
 // View Transaction History
 exports.getTransactionHistory = async (req, res) => {
+    const {id } = req.params;
   try {
-    const wallet = await Wallet.findOne({ user: req.user._id });
+    const wallet = await Wallet.findOne({ user: id });
     res.status(200).json(wallet.transactions);
   } catch (error) {
     res.status(500).json({ error: error.message });

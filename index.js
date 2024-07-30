@@ -11,6 +11,8 @@ const postRoutes = require("./routes/postRoutes");
 const sendEmail = require("./routes/emailSender");
 // import flutterwave plan
 const flutterwaveRoutes = require("./routes/flutterwaveRoutes");
+const splinxWalletRoutes = require("./routes/splinxWalletRoutes");
+
 
 
 // dotenv config
@@ -43,6 +45,7 @@ mongoose
     app.use("/email", sendEmail); // use email routes
     // use flutterwave routes
     app.use("/flw-api", flutterwaveRoutes);
+    app.use("/wallet", splinxWalletRoutes);
 
     app.listen(PORT, () => {
       console.log(`👌✨Server running at http://localhost:${PORT}`);
