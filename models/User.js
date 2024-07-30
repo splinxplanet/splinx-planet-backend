@@ -56,6 +56,10 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  walletAccountNumber: {
+    type: String,
+    default: "",
+  },
   myInterest: [{
       id: String,
       interest: String,
