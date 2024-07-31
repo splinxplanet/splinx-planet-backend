@@ -3,29 +3,39 @@ const User = require('../models/User');
 
 // Create Wallet Account
 exports.createWallet = async (req, res) => {
-    const { id } = req.params;
+  const { id } = req.params;
   try {
-      const user = await User.findById(id); 
-      
+    const user = await User.findById(id);
+
+    // Check if user exists
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Check if phoneNumber is available
+    if (!user.phoneNumber) {
+      return res.status(400).json({ error: 'Phone number is required to create a wallet' });
+    }
+
     const lastTenDigits = user.phoneNumber.slice(-10);
     const newWallet = new Wallet({
       user: id,
       accountNumber: lastTenDigits,
     });
-      
-      await newWallet.save();
-      
-    res.status(201).json(newWallet);
 
-    // update user isWalletCreated to true and walletAccountNumber to lastTenDigits
+    await newWallet.save();
+
+    // Update user isWalletCreated to true and walletAccountNumber to lastTenDigits
     user.isWalletCreated = true;
     user.walletAccountNumber = lastTenDigits;
     await user.save();
-    
+
+    res.status(201).json(newWallet);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 // Fund Wallet
 exports.fundWallet = async (req, res) => {
