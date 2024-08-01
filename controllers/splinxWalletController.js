@@ -39,15 +39,19 @@ exports.createWallet = async (req, res) => {
 
 // Fund Wallet
 exports.fundWallet = async (req, res) => {
-    const { id } = req.params;
+  const { id } = req.params;
   try {
-    const { amount } = req.body;
+    const { amount, name, email, currency } = req.body;
     const wallet = await Wallet.findOne({ user: id });
     wallet.balance += amount;
     wallet.transactions.push({
       type: 'FUND',
       amount,
       description: 'Wallet funding',
+      name,
+      email,
+      currency,
+      paymentStatus: 'successful',
     });
     await wallet.save();
     res.status(200).json(wallet);
@@ -58,11 +62,15 @@ exports.fundWallet = async (req, res) => {
 
 // Transfer Funds
 exports.transferFunds = async (req, res) => {
-    const { id } = req.params;
+  const { id } = req.params;
   try {
-    const { toAccountNumber, amount } = req.body;
+    const { toAccountNumber, amount, name, email, currency } = req.body;
     const senderWallet = await Wallet.findOne({ user: id });
     const receiverWallet = await Wallet.findOne({ accountNumber: toAccountNumber });
+
+    if (!receiverWallet) {
+      return res.status(404).json({ error: 'Receiver wallet not found' });
+    }
 
     if (senderWallet.balance < amount) {
       return res.status(400).json({ error: 'Insufficient balance' });
@@ -74,14 +82,22 @@ exports.transferFunds = async (req, res) => {
     senderWallet.transactions.push({
       type: 'TRANSFER',
       amount,
-      description: 'Transfer to ' + toAccountNumber,
+      description: `Transfer to ${toAccountNumber}`,
       toWallet: toAccountNumber,
+      name,
+      email,
+      currency,
+      paymentStatus: 'successful',
     });
 
     receiverWallet.transactions.push({
       type: 'FUND',
       amount,
-      description: 'Received from ' + senderWallet.accountNumber,
+      description: `Received from ${senderWallet.accountNumber}`,
+      name,
+      email,
+      currency,
+      paymentStatus: 'successful',
     });
 
     await senderWallet.save();
@@ -95,9 +111,10 @@ exports.transferFunds = async (req, res) => {
 
 // Make Payment
 exports.makePayment = async (req, res) => {
+  const { id } = req.params;
   try {
-    const { amount, description } = req.body;
-    const wallet = await Wallet.findOne({ user: req.user._id });
+    const { amount, description, name, email, currency } = req.body;
+    const wallet = await Wallet.findOne({ user: id });
 
     if (wallet.balance < amount) {
       return res.status(400).json({ error: 'Insufficient balance' });
@@ -108,6 +125,10 @@ exports.makePayment = async (req, res) => {
       type: 'PAYMENT',
       amount,
       description,
+      name,
+      email,
+      currency,
+      paymentStatus: 'successful',
     });
     await wallet.save();
     res.status(200).json(wallet);
@@ -118,10 +139,42 @@ exports.makePayment = async (req, res) => {
 
 // View Transaction History
 exports.getTransactionHistory = async (req, res) => {
-    const {id } = req.params;
+  const { id } = req.params;
   try {
     const wallet = await Wallet.findOne({ user: id });
     res.status(200).json(wallet.transactions);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Request Money
+exports.requestMoney = async (req, res) => {
+  const { id } = req.params; // requester's ID
+  try {
+    const { requesteeId, amount, description } = req.body;
+    const requesterWallet = await Wallet.findOne({ user: id });
+    const requesteeWallet = await Wallet.findOne({ user: requesteeId });
+
+    if (!requesteeWallet) {
+      return res.status(404).json({ error: 'Requestee wallet not found' });
+    }
+
+    const moneyRequest = {
+      requester: id,
+      requestee: requesteeId,
+      amount,
+      description,
+      status: 'pending',
+    };
+
+    requesterWallet.moneyRequests.push(moneyRequest);
+    requesteeWallet.moneyRequests.push(moneyRequest);
+
+    await requesterWallet.save();
+    await requesteeWallet.save();
+
+    res.status(200).json({ message: 'Money request sent', moneyRequest });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
