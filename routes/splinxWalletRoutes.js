@@ -5,6 +5,7 @@ const authMiddleware = require("../utils/validation"); // Middleware for user au
 const router = express.Router();
 
 router.post('/create-wallet/:id', walletController.createWallet);
+router.get('/get-wallet/:id', walletController.getWallet);
 router.post('/fund-wallet', authMiddleware, walletController.fundWallet);
 router.post('/transfer-funds/:id', authMiddleware, walletController.transferFunds);
 router.post('/make-payment', authMiddleware, walletController.makePayment);
