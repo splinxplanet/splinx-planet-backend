@@ -81,7 +81,11 @@ const walletSchema = new mongoose.Schema({
   },
   balance: {
     type: Number,
-    default: 0,
+    default: 0.00,
+  },
+  totalSpent: {
+    type: Number,
+    default: 0.00,
   },
   transactions: [transactionSchema],
   moneyRequests: [moneyRequestSchema],
