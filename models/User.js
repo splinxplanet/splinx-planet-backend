@@ -21,6 +21,16 @@ const userSchema = new mongoose.Schema({
   },
   country: String,
   city: String,
+  currency: {
+    code: {
+      type: String,
+      required: true,
+    },
+    symbol: {
+      type: String,
+      required: true, 
+    },
+  },
   homeAddress: String,
   enableNotification: {
         type: Boolean,

@@ -74,7 +74,7 @@ exports.fundWallet = async (req, res) => {
 exports.transferFunds = async (req, res) => {
   const { id } = req.params;
   try {
-    const { toAccountNumber, amount, name, email, currency } = req.body;
+    const { toAccountNumber, amount, name, email, currency, note } = req.body;
     const senderWallet = await Wallet.findOne({ user: id });
     const receiverWallet = await Wallet.findOne({ accountNumber: toAccountNumber });
 
@@ -92,7 +92,7 @@ exports.transferFunds = async (req, res) => {
     senderWallet.transactions.push({
       type: 'TRANSFER',
       amount,
-      description: `Transfer to ${toAccountNumber}`,
+      description: `Transfer to ${toAccountNumber} | ${note}`,
       toWallet: toAccountNumber,
       name,
       email,
@@ -163,7 +163,9 @@ exports.requestMoney = async (req, res) => {
   const { id } = req.params; // requester's ID
   try {
     const { requesteeId, amount, description } = req.body;
+
     const requesterWallet = await Wallet.findOne({ user: id });
+    
     const requesteeWallet = await Wallet.findOne({ user: requesteeId });
 
     if (!requesteeWallet) {
