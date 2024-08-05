@@ -62,6 +62,7 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  subscriptionPlan: String,
   isWalletCreated: {
     type: Boolean,
     default: false,
