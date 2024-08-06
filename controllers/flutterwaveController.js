@@ -116,9 +116,6 @@ exports.getSubscriptionDetails = async (req, res) => {
 //   }
 // };
 
-const fetch = require('node-fetch'); // Ensure you have this package installed
-const User = require('../models/User'); // Adjust the path to where your User model is located
-
 exports.createPayment = async (req, res) => {
   const { amount, currency, email, name, phonenumber, description, payment_plan } = req.body;
   const tx_ref = `tx-${Date.now()}`;
