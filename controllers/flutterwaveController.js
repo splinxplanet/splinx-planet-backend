@@ -109,33 +109,33 @@ exports.createPayment = async (req, res) => {
     // if transaction successful update user database
     // isSubscriber and subscriptionPlan
     // find user email
-    if (data.status === 'success') {
-      // Find the user by email
-      const user = await User.findOne({ emailAddress: email });
+    // if (data.status === 'success') {
+    //   // Find the user by email
+    //   const user = await User.findOne({ emailAddress: email });
 
-      if (!user) {
-        return res.status(404).json({ error: 'User not found' });
-      }
+    //   if (!user) {
+    //     return res.status(404).json({ error: 'User not found' });
+    //   }
 
-      // Update user's subscription status
-      user.isSubscriber = true;
-      user.subscriptionPlan = payment_plan; // or any other field from data to store
-      user.subscription = {
-        amount,
-        currency,
-        description,
-        payment_plan,
-        tx_ref,
-        paymentDate: new Date(),
-        status: data.status,
-      };
+    //   // Update user's subscription status
+    //   user.isSubscriber = true;
+    //   user.subscriptionPlan = payment_plan; // or any other field from data to store
+    //   user.subscription = {
+    //     amount,
+    //     currency,
+    //     description,
+    //     payment_plan,
+    //     tx_ref,
+    //     paymentDate: new Date(),
+    //     status: data.status,
+    //   };
 
-      await user.save();
+    //   await user.save();
 
-      return res.status(200).json({ message: 'Payment successful and user updated', data });
-    }
+    //   return res.status(200).json({ message: 'Payment successful and user updated', data });
+    // }
 
-    // res.status(200).json(data);
+    res.status(200).json(data);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
