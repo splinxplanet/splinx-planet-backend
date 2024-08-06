@@ -106,107 +106,14 @@ exports.createPayment = async (req, res) => {
     });
 
     const data = await response.json();
-    // if transaction successful update user database
-    // isSubscriber and subscriptionPlan
-    // find user email
-    if (response.status === 'success') {
-      // Find the user by email
-      const user = await User.findOne({ emailAddress: email });
 
-      if (!user) {
-        return res.status(404).json({ error: 'User not found' });
-      }
-
-      // Update user's subscription status
-      user.isSubscriber = true;
-      user.subscriptionPlan = payment_plan; // or any other field from data to store
-      user.subscription = {
-        amount,
-        currency,
-        description,
-        payment_plan,
-        tx_ref,
-        paymentDate: new Date(),
-        status: data.status,
-      };
-
-      await user.save();
-
-      return res.status(200).json({ message: 'Payment successful and user updated', data });
-    }
-
-    // res.status(200).json(data);
+    res.status(200).json(data);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-// exports.createPayment = async (req, res) => {
-//   const { amount, currency, email, name, phonenumber, description, payment_plan } = req.body;
-//   const tx_ref = `tx-${Date.now()}`;
-
-//   try {
-//     const response = await fetch('https://api.flutterwave.com/v3/payments', {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//         'Authorization': `Bearer ${process.env.FLW_SECRET_KEY}`
-//       },
-//       body: JSON.stringify({
-//         tx_ref,
-//         amount,
-//         payment_plan,
-//         currency,
-//         redirect_url: 'https://your-app.com/payment-success',
-//         customer: {
-//           email,
-//           name,
-//           phonenumber
-//         },
-//         customizations: {
-//           title: 'Splinx-Planet Subscription Payment',
-//           description
-//         }
-//       })
-//     });
-
-//     const data = await response.json();
-
-//     if (data.status === 'success') {
-//       // Find the user by email
-//       const user = await User.findOne({ emailAddress: email });
-
-//       if (!user) {
-//         return res.status(404).json({ error: 'User not found' });
-//       }
-
-//       // Update user's subscription status
-//       user.isSubscriber = true;
-//       user.subscriptionPlan = payment_plan; // or any other field from data to store
-//       user.subscription = {
-//         amount,
-//         currency,
-//         description,
-//         payment_plan,
-//         tx_ref,
-//         paymentDate: new Date(),
-//         status: data.status,
-//       };
-
-//       await user.save();
-
-//       return res.status(200).json({ message: 'Payment successful and user updated', data });
-//     } else {
-//       return res.status(400).json({ error: 'Payment failed', data });
-//     }
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// };
-
-
-
-// transaction verification
+// Verify payment
 exports.verifyTransaction = async (req, res) => {
   const { tx_ref } = req.body;
 
