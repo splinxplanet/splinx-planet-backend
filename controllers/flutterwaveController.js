@@ -130,7 +130,7 @@ exports.walletFunding = async (req, res) => {
         tx_ref,
         amount,
         currency,
-        redirect_url: 'https://your-app.com/wallet-payment-success',
+        redirect_url: 'https://splinxplanet.com/wallet-payment-success',
         customer: {
           email,
           name,
