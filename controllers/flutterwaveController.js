@@ -1,6 +1,7 @@
 const Flutterwave = require('flutterwave-node-v3');
+const flwSecretKey = process.env.FLW_SECRET_KEY;
 const flw = new Flutterwave(process.env.FLW_PUBLIC_KEY, process.env.FLW_SECRET_KEY);
-const User = require('../models/User');
+
 
 
 // create subscription plans
@@ -85,7 +86,7 @@ exports.createPayment = async (req, res) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.FLW_SECRET_KEY}`
+        'Authorization': `Bearer ${flwSecretKey}`
       },
       body: JSON.stringify({
         tx_ref,
@@ -96,7 +97,7 @@ exports.createPayment = async (req, res) => {
         customer: {
           email,
           name,
-          phonenumber
+          phonenumber 
         },
         customizations: {
           title: 'Splinx-Planet Subscription Payment',
@@ -113,24 +114,86 @@ exports.createPayment = async (req, res) => {
   }
 };
 
-// Verify payment
-exports.verifyTransaction = async (req, res) => {
-  const { tx_ref } = req.body;
-
-  if (!tx_ref) {
-    return res.status(400).json({ message: 'Transaction reference (tx_ref) is required' });
-  }
+// Wallet funding create payment endpoint
+exports.walletFunding = async (req, res) => {
+  const { amount, currency, email, name, phonenumber, description } = req.body;
+  const tx_ref = `tx-${Date.now()}`;
 
   try {
-    const payload = { "tx_ref": tx_ref };
-    const response = await flw.Transaction.verify(payload);
+    const response = await fetch('https://api.flutterwave.com/v3/payments', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${flwSecretKey}`
+      },
+      body: JSON.stringify({
+        tx_ref,
+        amount,
+        payment_plan,
+        currency,
+        redirect_url: 'https://your-app.com/wallet-payment-success',
+        customer: {
+          email,
+          name,
+          phonenumber 
+        },
+        customizations: {
+          title: 'Splinx-Planet Wallet Funding',
+          description
+        }
+      })
+    });
 
-    if (response.status === 'success') {
-      return res.status(200).json({ message: 'Transaction verified successfully', data: response.data });
-    } else {
-      return res.status(400).json({ message: 'Transaction verification failed', data: response.data });
-    }
+    const data = await response.json();
+
+    res.status(200).json(data);
   } catch (error) {
-    return res.status(500).json({ message: 'Internal server error', error: error.message });
+    res.status(500).json({ error: error.message });
   }
+};
+
+// Verify any payment transaction
+exports.verifyTransaction = async (req, res) => {
+    const transactionId = req.params.id;
+
+    try {
+        const response = await fetch(`https://api.flutterwave.com/v3/transactions/${transactionId}/verify`, {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${flwSecretKey}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.status === 'success') {
+            return res.status(200).json({
+                status: 'success',
+                message: 'Transaction fetched successfully',
+                data: data.data
+            });
+        } else {
+            return res.status(400).json({
+                status: 'error',
+                message: 'Unable to verify transaction',
+                data: data
+            });
+        }
+    } catch (error) {
+        console.error('Error verifying transaction:', error.message);
+
+        if (error.response && error.response.status === 401) {
+            return res.status(401).json({
+                status: 'error',
+                message: 'Unauthorized: Invalid API Key'
+            });
+        } else {
+            return res.status(500).json({
+                status: 'error',
+                message: 'An error occurred while verifying the transaction',
+                error: error.message
+            });
+        }
+    }
 };
