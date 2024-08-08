@@ -129,7 +129,6 @@ exports.walletFunding = async (req, res) => {
       body: JSON.stringify({
         tx_ref,
         amount,
-        payment_plan,
         currency,
         redirect_url: 'https://your-app.com/wallet-payment-success',
         customer: {
