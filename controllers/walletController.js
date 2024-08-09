@@ -1,7 +1,7 @@
 const path = require("path");
 const axios = require("axios");
 const User = require("./model/user");
-const Wallet = require("./model/wallet");
+// const Wallet = require("./model/wallet");
 const WalletTransaction = require("./model/wallet_transaction");
 const Transaction = require("./model/transaction");
 const { validateUserWallet, createWalletTransaction, createTransaction, updateWallet, } = require("../utils/walletMethod");
