@@ -73,6 +73,7 @@ exports.loginUser = async (req, res) => {
     country: user.country,
     city: user.city,
     currency: user.currency,
+    currencySymbol: user.currencySymbol,
     homeAddress: user.homeAddress,
     dob: user.dob,
     age: user.age,
