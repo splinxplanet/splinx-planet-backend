@@ -113,4 +113,31 @@ exports.forgotPassword = async (req, res) => {
     res.json({ message: "Password reset link sent to your email" });
 }
 
+// Check if a user exists by phone number
+exports.checkUserByPhoneNumber = async (req, res) => {
+  const { phoneNumber } = req.body;
+
+  // Validate phone number
+  if (!phoneNumber) {
+    return res.status(400).json({ message: "Phone number is required" });
+  }
+
+  try {
+    // Find user by phone number
+    const user = await User.findOne({ phoneNumber });
+
+    if (user) {
+      // User exists
+      return res.status(200).json({ exists: true });
+    } else {
+      // User does not exist
+      return res.status(200).json({ exists: false });
+    }
+  } catch (error) {
+    console.error("Error checking user by phone number:", error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+
 
