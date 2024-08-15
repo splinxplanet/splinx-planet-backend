@@ -191,3 +191,37 @@ exports.requestMoney = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+// accept request
+exports.acceptRequest = async (req, res) => {
+  const { id } = req.params; // requestee's ID
+  try {
+    const { requestId } = req.body;
+
+    const requesteeWallet = await Wallet.findOne({ user: id });
+
+    const requesterWallet = await Wallet.findOne({ 'moneyRequests._id': requestId });
+
+    if (!requesterWallet) {
+      return res.status(404).json({ error: 'Requester wallet not found' });
+    }
+
+    const moneyRequest = requesteeWallet.moneyRequests.id(requestId);
+
+    if (!moneyRequest) {
+      return res.status(404).json({ error: 'Money request not found' });
+    }
+
+    moneyRequest.status = 'accepted';
+
+    requesteeWallet.balance -= moneyRequest.amount;
+    requesterWallet.balance += moneyRequest.amount;
+
+    await requesteeWallet.save();
+    await requesterWallet.save();
+
+    res.status(200).json({ message: 'Money request accepted', moneyRequest });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
