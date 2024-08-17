@@ -21,6 +21,9 @@ router.get("/subscription-details/:email", flutterwaveController.getSubscription
 // Create payment route
 router.post("/create-payment", flutterwaveController.createPayment);
 
+// payment success callback
+router.get("/payment-success", flutterwaveController.paymentSuccess);
+
 // Wallet Funding Create payment route
 router.post("/fund-wallet", flutterwaveController.walletFunding);
 
