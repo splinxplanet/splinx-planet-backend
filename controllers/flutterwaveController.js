@@ -1,6 +1,7 @@
 const Flutterwave = require('flutterwave-node-v3');
 const flwSecretKey = process.env.FLW_SECRET_KEY;
 const flw = new Flutterwave(process.env.FLW_PUBLIC_KEY, process.env.FLW_SECRET_KEY);
+const serverURL = process.env.SERVER_URL;
 
 
 
@@ -93,7 +94,7 @@ exports.createPayment = async (req, res) => {
         amount,
         payment_plan,
         currency,
-        redirect_url: 'com.splinxplanet.app/payment-success',
+        redirect_url: 'myapp://splinxplanet/payment-success',
         customer: {
           email,
           name,
