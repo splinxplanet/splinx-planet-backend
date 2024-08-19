@@ -81,6 +81,7 @@ exports.createPayment = async (req, res) => {
   const { amount, currency, email, name, phonenumber, description, payment_plan } = req.body;
   const tx_ref = `tx-${Date.now()}`;
 
+  const redirect_url = 'splinxplanet://payment-success';
   try {
     const response = await fetch('https://api.flutterwave.com/v3/payments', {
       method: 'POST',
@@ -93,7 +94,7 @@ exports.createPayment = async (req, res) => {
         amount,
         payment_plan,
         currency,
-        redirect_url: 'https://splinxplanet/payment-success',
+        redirect_url: redirect_url,
         customer: {
           email,
           name,
