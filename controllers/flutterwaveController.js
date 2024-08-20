@@ -81,7 +81,7 @@ exports.createPayment = async (req, res) => {
   const { amount, currency, email, name, phonenumber, description, payment_plan } = req.body;
   const tx_ref = `tx-${Date.now()}`;
 
-  const redirect_url =  "https://mysite.com/payment-success"
+  const redirect_url =  "https://example_company.com/payment-success"
   try {
     const response = await fetch('https://api.flutterwave.com/v3/payments', {
       method: 'POST',
