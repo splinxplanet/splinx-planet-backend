@@ -93,7 +93,7 @@ exports.createPayment = async (req, res) => {
         amount,
         payment_plan,
         currency,
-        redirect_url: redirect_url,
+        // redirect_url: redirect_url,
         customer: {
           email,
           name,
