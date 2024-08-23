@@ -80,8 +80,7 @@ exports.getSubscriptionDetails = async (req, res) => {
 exports.createPayment = async (req, res) => {
   const { amount, currency, email, name, phonenumber, description, payment_plan } = req.body;
   const tx_ref = `tx-${Date.now()}`;
-
-  const redirect_url =  "https://your-app.com/payment-success"
+  const redirect_url = "myapp://payment-success";
   try {
     const response = await fetch('https://api.flutterwave.com/v3/payments', {
       method: 'POST',
@@ -119,6 +118,7 @@ exports.createPayment = async (req, res) => {
 exports.walletFunding = async (req, res) => {
   const { amount, currency, email, name, phonenumber, description } = req.body;
   const tx_ref = `tx-${Date.now()}`;
+  const redirect_url = "myapp://wallet-payment-success";
 
   try {
     const response = await fetch('https://api.flutterwave.com/v3/payments', {
@@ -131,7 +131,8 @@ exports.walletFunding = async (req, res) => {
         tx_ref,
         amount,
         currency,
-        redirect_url: 'https://your-app.com/wallet-payment-success',
+        // handle redirect to react native expo Success Screen
+        redirect_url: redirect_url,
         customer: {
           email,
           name,
