@@ -68,6 +68,7 @@ exports.loginUser = async (req, res) => {
     enableSmsNotification: user.enableSmsNotification,
     enableEmailNotification: user.enableEmailNotification,
     isSubscriber: user.isSubscriber,
+    subscriptionPlan: user.subscriptionPlan,
     isWalletCreated: user.isWalletCreated,
     walletAccountNumber: user.walletAccountNumber,
     country: user.country,

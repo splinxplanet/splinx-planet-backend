@@ -17,19 +17,18 @@ const transactionSchema = new mongoose.Schema({
   },
   description: String,
   toWallet: String, // For transfers
-      name: {
+  name: {
       type: String,
       required: [true, "name is required"],
       trim: true,
     },
-    email: {
+  email: {
       type: String,
       required: [true, "email is required"],
       trim: true,
     },
     currency: {
       type: String,
-      enum: ["NGN", "USD", "EUR", "GBP"],
       default: "USD",
     },
     paymentStatus: {
