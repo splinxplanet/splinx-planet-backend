@@ -49,7 +49,7 @@ exports.updateUserProfile = async (req, res) => {
     enableSmsNotification,
     enableEmailNotification,
     isSubscriber,
-    subscription,
+    subscriptionPlan,
     myInterest,
     hashtagFollowing
   } = req.body;
@@ -75,7 +75,7 @@ exports.updateUserProfile = async (req, res) => {
     if (enableSmsNotification !== undefined) user.enableSmsNotification = enableSmsNotification;
     if (enableEmailNotification !== undefined) user.enableEmailNotification = enableEmailNotification;
     if (isSubscriber !== undefined) user.isSubscriber = isSubscriber;
-    if (subscription !== undefined) user.subscription = subscription;
+    if (subscriptionPlan !== undefined) user.subscriptionPlan = subscriptionPlan;
 
     await user.save();
 
