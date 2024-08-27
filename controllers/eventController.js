@@ -1,8 +1,8 @@
 
 const Event = require('../models/Event');
 const User = require('../models/User');
-const SplitBill = require("./models/Splitbills"); 
-const WalletTransaction = require("./models/SplinxWallet"); 
+const SplitBill = require("../models/Splitbills"); 
+const WalletTransaction = require("../models/SplinxWallet"); 
 
 const mongoose = require('mongoose');
 
@@ -279,6 +279,24 @@ exports.paySplitCost = async (req, res) => {
 
     // Return success response
     res.status(200).json({ message: "Payment successful", splitBill, transaction });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+// fetch all split bills for a user
+exports.fetchAllSplitBills = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const splitBills = await SplitBill.find({ "members.user": userId });
+
+    if (!splitBills.length) {
+      return res.status(404).json({ message: 'No split bills found for this user' });
+    }
+
+    res.status(200).json({ splitBills });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Server error" });
