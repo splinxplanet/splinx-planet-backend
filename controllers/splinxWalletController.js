@@ -225,3 +225,35 @@ exports.acceptRequest = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+
+// decline request
+exports.declineRequest = async (req, res) => {
+  const { id } = req.params; // requestee's ID
+  try {
+    const { requestId } = req.body;
+
+    const requesteeWallet = await Wallet.findOne({ user: id });
+
+    const requesterWallet = await Wallet.findOne({ 'moneyRequests._id': requestId });
+
+    if (!requesterWallet) {
+      return res.status(404).json({ error: 'Requester wallet not found' });
+    }
+
+    const moneyRequest = requesteeWallet.moneyRequests.id(requestId);
+
+    if (!moneyRequest) {
+      return res.status(404).json({ error: 'Money request not found' });
+    }
+
+    moneyRequest.status = 'declined';
+
+    await requesteeWallet.save();
+
+    res.status(200).json({ message: 'Money request declined', moneyRequest });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
