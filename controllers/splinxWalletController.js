@@ -247,7 +247,7 @@ exports.declineRequest = async (req, res) => {
       return res.status(404).json({ error: 'Money request not found' });
     }
 
-    moneyRequest.status = 'declined';
+    moneyRequest.status = 'rejected';
 
     await requesteeWallet.save();
 
