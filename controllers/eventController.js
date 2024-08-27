@@ -1,6 +1,9 @@
 
 const Event = require('../models/Event');
 const User = require('../models/User');
+const SplitBill = require("./models/Splitbills"); 
+const WalletTransaction = require("./models/SplinxWallet"); 
+
 const mongoose = require('mongoose');
 
 // create new event 
@@ -218,6 +221,67 @@ exports.splitCost = async (req, res) => {
 
   } catch (error) {
     res.status(500).json({ message: 'Internal server error', error });
+  }
+};
+
+// pay split cost
+exports.paySplitCost = async (req, res) => {
+  const { userId, splitBillId } = req.body;
+
+  try {
+    // Fetch the split bill and user data
+    const splitBill = await SplitBill.findById(splitBillId);
+    const user = await User.findById(userId);
+
+    if (!splitBill || !user) {
+      return res.status(404).json({ error: "Split bill or user not found" });
+    }
+
+    // Find the member in the split bill
+    const member = splitBill.members.find((m) => m.user.toString() === userId);
+
+    if (!member) {
+      return res.status(400).json({ error: "User is not part of this split bill" });
+    }
+
+    // Check if the user has already paid
+    if (member.status === "Paid") {
+      return res.status(400).json({ error: "This bill has already been paid by the user" });
+    }
+
+    // Check if the user has sufficient funds in their wallet
+    if (user.walletBalance < member.shareAmount) {
+      return res.status(400).json({ error: "Insufficient wallet balance" });
+    }
+
+    // Deduct the amount from the user's wallet
+    user.walletBalance -= member.shareAmount;
+
+    // Create a wallet transaction
+    const transaction = new WalletTransaction({
+      amount: member.shareAmount,
+      userId: user._id,
+      isInflow: false,
+      paymentMethod: "wallet",
+      currency: "NGN", // Replace with dynamic currency if needed
+      status: "successful",
+    });
+
+    // Update the split bill member status and paid amount
+    member.paidAmount = member.shareAmount;
+    member.status = "Paid";
+    splitBill.paidAmount += member.shareAmount;
+
+    // Save the updated documents
+    await user.save();
+    await transaction.save();
+    await splitBill.save();
+
+    // Return success response
+    res.status(200).json({ message: "Payment successful", splitBill, transaction });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
   }
 };
 
