@@ -183,14 +183,57 @@ exports.inviteUsersToEvent = async (req, res) => {
   }
 };
 
+// Split event cost old
+// exports.splitCost = async (req, res) => {
+//   const { eventId } = req.params;
+//   const { splitPercentages } = req.body; // Object with memberId as key and percentage as value
+
+//   try {
+//     const event = await Event.findById(eventId);
+
+//     if (!event) {
+//       return res.status(404).json({ message: 'Event not found' });
+//     }
+
+//     const totalCost = event.eventCost;
+//     const eventMembers = event.eventMembers;
+
+//     // Validate split percentages
+//     const totalPercentage = Object.values(splitPercentages).reduce((acc, percentage) => acc + percentage, 0);
+//     if (totalPercentage !== 100) {
+//       return res.status(400).json({ message: 'Total split percentages must equal 100%' });
+//     }
+
+//     // Update each member's split cost
+//     eventMembers.forEach(member => {
+//       const percentage = splitPercentages[member.user.toString()];
+//       if (percentage) {
+//         member.splitCost = (totalCost * percentage) / 100;
+//         member.paymentStatus = 'pending';
+//       }
+//     });
+
+//     // update isEventCostSplitted to true
+//     event.isEventCostSplitted = true;
+
+//     await event.save();
+//     res.status(200).json({ message: 'Event cost split successfully', event });
+
+//   } catch (error) {
+//     res.status(500).json({ message: 'Internal server error', error });
+//   }
+// };
+
 // Split event cost
 exports.splitCost = async (req, res) => {
   const { eventId } = req.params;
   const { splitPercentages } = req.body; // Object with memberId as key and percentage as value
 
   try {
+    // Find the event by ID
     const event = await Event.findById(eventId);
 
+    // Check if event exists
     if (!event) {
       return res.status(404).json({ message: 'Event not found' });
     }
@@ -198,26 +241,46 @@ exports.splitCost = async (req, res) => {
     const totalCost = event.eventCost;
     const eventMembers = event.eventMembers;
 
-    // Validate split percentages
+    // Validate that total split percentages equal 100%
     const totalPercentage = Object.values(splitPercentages).reduce((acc, percentage) => acc + percentage, 0);
     if (totalPercentage !== 100) {
       return res.status(400).json({ message: 'Total split percentages must equal 100%' });
     }
 
-    // Update each member's split cost
+    // Create a new SplitBill document
+    const splitBill = new SplitBill({
+      event: event._id,
+      creator: event.eventCreator,
+      totalAmount: totalCost,
+      members: []
+    });
+
+    // Update each member's share and add to the SplitBill document
     eventMembers.forEach(member => {
       const percentage = splitPercentages[member.user.toString()];
       if (percentage) {
-        member.splitCost = (totalCost * percentage) / 100;
+        const shareAmount = (totalCost * percentage) / 100;
+
+        splitBill.members.push({
+          user: member.user,
+          shareAmount,
+          status: 'Pending'
+        });
+
+        // Update the member's split cost and payment status in the event
+        member.splitCost = shareAmount;
         member.paymentStatus = 'pending';
       }
     });
 
-    // update isEventCostSplitted to true
+    // Update event to mark cost as split
     event.isEventCostSplitted = true;
 
+    // Save the SplitBill and event updates
+    await splitBill.save();
     await event.save();
-    res.status(200).json({ message: 'Event cost split successfully', event });
+
+    res.status(200).json({ message: 'Event cost split successfully', event, splitBill });
 
   } catch (error) {
     res.status(500).json({ message: 'Internal server error', error });
