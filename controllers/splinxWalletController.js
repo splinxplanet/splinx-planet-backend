@@ -214,8 +214,12 @@ exports.acceptRequest = async (req, res) => {
 
     moneyRequest.status = 'accepted';
 
+    // Deduct amount from requestee and add to requester
     requesteeWallet.balance -= moneyRequest.amount;
     requesterWallet.balance += moneyRequest.amount;
+
+    // Update totalSpent for requestee
+    requesteeWallet.totalSpent += moneyRequest.amount;
 
     await requesteeWallet.save();
     await requesterWallet.save();
@@ -225,7 +229,6 @@ exports.acceptRequest = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
 
 // decline request
 exports.declineRequest = async (req, res) => {
