@@ -102,49 +102,92 @@ exports.getEvent = async (req, res) => {
 };
 
 // register for event
+// exports.registerForEvent = async (req, res) => {
+//   try {
+//     const eventId = req.params.eventId;
+//     const userId = req.body.userId; // Assuming you send userId in the request body
+//     const isAllowReminder = req.body.isAllowReminder; // Assuming you send isAllowReminder in the request body
+
+//     // Validate eventId
+//     if (!mongoose.isValidObjectId(eventId)) {
+//       return res.status(400).json({ message: 'Invalid eventId' });
+//     }
+
+//     // Check if the event exists
+//     const event = await Event.findById(eventId);
+//     if (!event) {
+//       return res.status(404).json({ message: 'Event not found' });
+//     }
+
+//     // Check if the user exists
+//     const user = await User.findById(userId);
+//     if (!user) {
+//       return res.status(404).json({ message: 'User not found' });
+//     }
+
+//     // Check if the user is already registered for the event
+//     if (event.eventMembers.some(member => member.user.equals(userId))) {
+//       return res.status(400).json({ message: 'User already registered for the event' });
+//     }
+
+//     // Determine the splitCost value
+//     let splitCost = 0;
+//     if (event.isEventCostSplitted) {
+//       splitCost = event.eventCost / (event.eventMembers.length + 1); // Adjust according to your splitting logic
+//     }
+
+//     // Register the user for the event and set isAllowReminder and splitCost
+//     event.eventMembers.push({ user: userId, isAllowReminder, splitCost });
+//     await event.save();
+
+//     res.status(200).json({ message: 'User registered for the event successfully' });
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
+// Ensure that we log errors for easier debugging
 exports.registerForEvent = async (req, res) => {
   try {
     const eventId = req.params.eventId;
-    const userId = req.body.userId; // Assuming you send userId in the request body
-    const isAllowReminder = req.body.isAllowReminder; // Assuming you send isAllowReminder in the request body
+    const userId = req.body.userId;
+    const isAllowReminder = req.body.isAllowReminder;
 
-    // Validate eventId
     if (!mongoose.isValidObjectId(eventId)) {
       return res.status(400).json({ message: 'Invalid eventId' });
     }
 
-    // Check if the event exists
     const event = await Event.findById(eventId);
     if (!event) {
       return res.status(404).json({ message: 'Event not found' });
     }
 
-    // Check if the user exists
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Check if the user is already registered for the event
     if (event.eventMembers.some(member => member.user.equals(userId))) {
       return res.status(400).json({ message: 'User already registered for the event' });
     }
 
-    // Determine the splitCost value
     let splitCost = 0;
     if (event.isEventCostSplitted) {
-      splitCost = event.eventCost / (event.eventMembers.length + 1); // Adjust according to your splitting logic
+      // Add user first, then calculate split cost
+      event.eventMembers.push({ user: userId, isAllowReminder, splitCost });
+      splitCost = event.eventCost / event.eventMembers.length;
+    } else {
+      event.eventMembers.push({ user: userId, isAllowReminder, splitCost });
     }
 
-    // Register the user for the event and set isAllowReminder and splitCost
-    event.eventMembers.push({ user: userId, isAllowReminder, splitCost });
     await event.save();
 
     res.status(200).json({ message: 'User registered for the event successfully' });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: error.message });
   }
 };
+
 
 
 // Invite users
@@ -289,7 +332,7 @@ exports.splitCost = async (req, res) => {
 
 // pay split cost
 exports.paySplitCost = async (req, res) => {
-  const { userId, splitBillId } = req.body;
+  const { userId, splitBillId, currency } = req.body;
 
   try {
     // Fetch the split bill and user data
@@ -326,7 +369,7 @@ exports.paySplitCost = async (req, res) => {
       userId: user._id,
       isInflow: false,
       paymentMethod: "wallet",
-      currency: "NGN", // Replace with dynamic currency if needed
+      currency: currency,
       status: "successful",
     });
 
@@ -386,6 +429,81 @@ exports.getEventsByUser = async (req, res) => {
     res.status(200).json({ events });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+// fetch event member information
+exports.fetchEventMembersInfo = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+
+    // Find the event by ID and populate the eventMembers' user information
+    const event = await Event.findById(eventId)
+      .populate({
+        path: 'eventMembers.user',
+        select: 'firstName lastName profileImg',
+      })
+      .exec();
+
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+
+    // Fetch the split bill information for the event
+    const splitBills = await SplitBill.find({ event: eventId })
+      .populate({
+        path: 'members.user',
+        select: 'firstName lastName profileImg',
+      })
+      .exec();
+
+    // Create a response object
+    const response = event.eventMembers.map((member) => {
+      // Find the corresponding split bill information for the member
+      const splitBill = splitBills
+        .flatMap((bill) => bill.members)
+        .find((m) => m.user._id.toString() === member.user._id.toString());
+
+      return {
+        firstName: member.user.firstName,
+        lastName: member.user.lastName,
+        profileImg: member.user.profileImg,
+        splitCost: member.splitCost,
+        paymentStatus: member.paymentStatus,
+        splitBill: splitBill ? {
+          shareAmount: splitBill.shareAmount,
+          paidAmount: splitBill.paidAmount,
+          status: splitBill.status,
+        } : null,
+      };
+    });
+
+    res.status(200).json(response);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// Update any event property
+exports.updateEvent = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const updates = req.body; // The fields to update
+
+    const event = await Event.findByIdAndUpdate(
+      eventId,
+      { $set: updates },
+      { new: true, runValidators: true } // Return the updated document and run validation
+    );
+
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found.' });
+    }
+
+    res.status(200).json({ message: 'Event updated successfully.', event });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };
 

@@ -37,4 +37,10 @@ router.post('/pay-split-cost', authenticationToken, eventController.paySplitCost
 // fetch all split costs
 router.get('/fetch-split-costs/:userId', authenticationToken, eventController.fetchAllSplitBills);
 
+// fetch event members info
+router.get('/events/:eventId/members', authenticationToken, eventController.fetchEventMembersInfo);
+
+// Route to update any event property
+router.put('/event/:eventId', eventController.updateEvent);
+
 module.exports = router;

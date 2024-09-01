@@ -22,6 +22,10 @@ const eventSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  isWithdrawRequested: {
+    type: Boolean,
+    default: false
+  },
   eventCategory: String,
   eventHashtag: String,
   isPopular: { type: Boolean, default: false },
