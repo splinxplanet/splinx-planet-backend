@@ -43,4 +43,7 @@ router.get('/events/:eventId/members', authenticationToken, eventController.fetc
 // Route to update any event property
 router.put('/event/:eventId', eventController.updateEvent);
 
+// send payment reminder
+router.post('/send-payment-reminder', authenticationToken, eventController.sendPaymentReminder);
+
 module.exports = router;
