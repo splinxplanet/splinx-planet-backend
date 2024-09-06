@@ -15,11 +15,7 @@ const withdrawalRequestSchema = new Schema({
     type: Number,
     required: true,
   },
-  totalAmount: {
-    type: Number,
-    required: true,
-  },
-  paidAmount: {
+  totalPaidByMembers: {
     type: Number,
     required: true,
   },

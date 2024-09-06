@@ -26,6 +26,10 @@ const eventSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  totalPaidByMembers: {
+    type: Number,
+    default: 0
+  },
   eventCategory: String,
   eventHashtag: String,
   isPopular: { type: Boolean, default: false },

@@ -3,14 +3,13 @@ const WithdrawalRequest = require('../models/WithdrawalRequest');
 // Submit Withdrawal Request
 exports.submitWithdrawalRequest = async (req, res) => {
   try {
-    const { creatorId, eventName, eventCost, totalAmount, paidAmount, bankName, accountNumber } = req.body;
+    const { creatorId, eventName, eventCost, totalPaidByMembers, bankName, accountNumber } = req.body;
 
     const newRequest = new WithdrawalRequest({
       creatorId,
       eventName,
       eventCost,
-      totalAmount,
-      paidAmount,
+      totalPaidByMembers,
       bankName,
       accountNumber,
     });
