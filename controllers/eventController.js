@@ -3,6 +3,7 @@ const Event = require('../models/Event');
 const User = require('../models/User');
 const SplitBill = require("../models/Splitbills"); 
 const WalletTransaction = require("../models/SplinxWallet"); 
+const sendEmail = require('../utils/sendEmail');
 
 const mongoose = require('mongoose');
 
@@ -506,4 +507,38 @@ exports.updateEvent = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+exports.sendPaymentReminder = async (req, res) => {
+  const { eventId, eventMembers } = req.body;
+
+  try {
+    // Find the event by eventId
+    const event = await Event.findById(eventId);
+
+    // Find the users who haven't paid yet
+    const unpaidMembers = eventMembers.filter(member => member.paymentStatus === "pending");
+
+    if (unpaidMembers.length === 0) {
+      return res.status(400).json({ message: "No unpaid members found for this event." });
+    }
+
+    // Send payment reminders (e.g., via email or push notifications)
+    unpaidMembers.forEach(async (member) => {
+      const user = await User.findById(member.userId);
+      // Assuming a function sendEmail or sendPushNotification exists
+      await sendEmail(user.email, "Payment Reminder", `You still owe for the event: ${event.eventName}
+        Please log in to Splinx app to make your payment.
+        Amount: ${member.splitCost}
+        Payment Due Date: ${event.eventDate}
+        
+        Thank you for your cooperation.`);
+    });
+
+    res.status(200).json({ message: "Payment reminders sent successfully." });
+  } catch (error) {
+    console.error("Error sending payment reminder: ", error);
+    res.status(500).json({ message: "Error sending payment reminder." });
+  }
+};
+
 
