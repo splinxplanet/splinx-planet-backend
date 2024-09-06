@@ -3,9 +3,10 @@ const WithdrawalRequest = require('../models/WithdrawalRequest');
 // Submit Withdrawal Request
 exports.submitWithdrawalRequest = async (req, res) => {
   try {
-    const { creatorId, eventName, eventCost, totalPaidByMembers, bankName, accountNumber } = req.body;
+    const { creatorId, eventName, eventCost, eventId, totalPaidByMembers, bankName, accountNumber } = req.body;
 
     const newRequest = new WithdrawalRequest({
+      eventId,
       creatorId,
       eventName,
       eventCost,
@@ -13,6 +14,14 @@ exports.submitWithdrawalRequest = async (req, res) => {
       bankName,
       accountNumber,
     });
+
+    // check if the user has already submitted a withdrawal request for the event
+    const existingRequest = await WithdrawalRequest.findOne({ eventId });
+    
+    if (existingRequest) {
+      return res.status(400).json({ message: 'Withdrawal request already submitted for this event.' });
+    }
+
 
     await newRequest.save();
     res.status(201).json({ message: 'Withdrawal request submitted successfully.' });

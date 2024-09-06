@@ -7,6 +7,11 @@ const withdrawalRequestSchema = new Schema({
     ref: 'User',
     required: true,
   },
+  eventId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Event',
+    required: true,
+  },
   eventName: {
     type: String,
     required: true,
