@@ -59,6 +59,7 @@ exports.loginUser = async (req, res) => {
   // send user profile and token
   const userProfile = {
     _id: user._id,
+    createdAt: user.createdAt,
     firstName: user.firstName,
     lastName: user.lastName,
     emailAddress: user.emailAddress,
