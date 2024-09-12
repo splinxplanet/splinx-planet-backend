@@ -14,6 +14,9 @@ const withdrawalRoutes = require("./routes/withdrawalRoutes");
 const flutterwaveRoutes = require("./routes/flutterwaveRoutes");
 const splinxWalletRoutes = require("./routes/splinxWalletRoutes");
 
+// app admin management
+const adminRoutes = require("./routes/adminRoutes");
+
 
 
 // dotenv config
@@ -48,6 +51,9 @@ mongoose
     // use flutterwave routes
     app.use("/flw-api", flutterwaveRoutes);
     app.use("/wallet", splinxWalletRoutes);
+
+    // app admin management
+    app.use("/admin", adminRoutes);
 
     app.listen(PORT, () => {
       console.log(`👌✨Server running at http://localhost:${PORT}`);
