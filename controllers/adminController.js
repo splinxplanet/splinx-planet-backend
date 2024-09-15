@@ -106,8 +106,30 @@ exports.deleteAdmin = async (req, res) => {
   }
 };
 
-// Forgot password (send reset link)
 exports.forgotPassword = async (req, res) => {
-  // Implementation for forgot password (generate token, send email, etc.)
-  res.status(200).json({ success: true, message: 'Forgot password functionality not implemented yet' });
+    const { emailAddress, newPassword } = req.body;
+
+  if (!emailAddress || !newPassword) {
+    return res.status(400).json({ message: "Old email address and new password are required." });
+  }
+
+  try {
+    const user = await Admin.findOne({ emailAddress });
+    if (!user) {
+      return res.status(404).json({ message: "Admin not found." });
+    }
+
+    // check if email matches user email
+    if (emailAddress !== user.emailAddress) {
+      return res.status(400).json({ message: "Email address doesn't exist" });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(newPassword, salt);
+    await user.save();
+
+    res.status(200).json({ message: "Password changed successfully." });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
