@@ -2,6 +2,9 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+// swagger
+const swaggerUi = require('swagger-ui-express');
+const swaggerFile = require('./utils/swagger-output.json');
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const eventRoutes = require("./routes/eventRoutes");
@@ -39,6 +42,8 @@ mongoose
     // app.use(cors({
     //     origin: "https://example.com"
     // }));
+    app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile))
+
 
     app.use("/auth", authRoutes); // Use auth routes
     app.use("/user", userRoutes); // Use user routes

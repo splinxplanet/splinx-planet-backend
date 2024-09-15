@@ -27,7 +27,7 @@ exports.createAdmin = async (req, res) => {
     });
 
       // Send email with login details
-      await sendEmail(emailAddress, 'Admin Account Created', `Your account has been created. Login with username: ${userName} and password: ${password}`);
+      await sendEmail(emailAddress, 'Admin Account Created', `Your account has been created. Login with username: ${emailAddress} and password: ${password}`);
     
     res.status(201).json({ success: true, data: newAdmin });
   } catch (error) {
