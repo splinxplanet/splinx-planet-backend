@@ -71,7 +71,6 @@ exports.updateEvent = async (req, res) => {
   }
 };
 
-
 // delete an event
 exports.deleteEvent = async (req, res) => {
   try {
@@ -103,49 +102,6 @@ exports.getEvent = async (req, res) => {
 };
 
 // register for event
-// exports.registerForEvent = async (req, res) => {
-//   try {
-//     const eventId = req.params.eventId;
-//     const userId = req.body.userId; // Assuming you send userId in the request body
-//     const isAllowReminder = req.body.isAllowReminder; // Assuming you send isAllowReminder in the request body
-
-//     // Validate eventId
-//     if (!mongoose.isValidObjectId(eventId)) {
-//       return res.status(400).json({ message: 'Invalid eventId' });
-//     }
-
-//     // Check if the event exists
-//     const event = await Event.findById(eventId);
-//     if (!event) {
-//       return res.status(404).json({ message: 'Event not found' });
-//     }
-
-//     // Check if the user exists
-//     const user = await User.findById(userId);
-//     if (!user) {
-//       return res.status(404).json({ message: 'User not found' });
-//     }
-
-//     // Check if the user is already registered for the event
-//     if (event.eventMembers.some(member => member.user.equals(userId))) {
-//       return res.status(400).json({ message: 'User already registered for the event' });
-//     }
-
-//     // Determine the splitCost value
-//     let splitCost = 0;
-//     if (event.isEventCostSplitted) {
-//       splitCost = event.eventCost / (event.eventMembers.length + 1); // Adjust according to your splitting logic
-//     }
-
-//     // Register the user for the event and set isAllowReminder and splitCost
-//     event.eventMembers.push({ user: userId, isAllowReminder, splitCost });
-//     await event.save();
-
-//     res.status(200).json({ message: 'User registered for the event successfully' });
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
 // Ensure that we log errors for easier debugging
 exports.registerForEvent = async (req, res) => {
   try {
@@ -188,8 +144,6 @@ exports.registerForEvent = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
-
 
 // Invite users
 exports.inviteUsersToEvent = async (req, res) => {
@@ -508,6 +462,7 @@ exports.updateEvent = async (req, res) => {
   }
 };
 
+// Send payment reminders to users who haven't paid
 exports.sendPaymentReminder = async (req, res) => {
   const { eventId, eventMembers } = req.body;
 

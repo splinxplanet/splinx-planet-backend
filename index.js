@@ -2,6 +2,9 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+// swagger
+const swaggerUi = require('swagger-ui-express');
+const swaggerFile = require('./utils/swagger-output.json');
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const eventRoutes = require("./routes/eventRoutes");
@@ -13,6 +16,9 @@ const withdrawalRoutes = require("./routes/withdrawalRoutes");
 // import flutterwave plan
 const flutterwaveRoutes = require("./routes/flutterwaveRoutes");
 const splinxWalletRoutes = require("./routes/splinxWalletRoutes");
+
+// app admin management
+const adminRoutes = require("./routes/adminRoutes");
 
 
 
@@ -36,6 +42,8 @@ mongoose
     // app.use(cors({
     //     origin: "https://example.com"
     // }));
+    app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile))
+
 
     app.use("/auth", authRoutes); // Use auth routes
     app.use("/user", userRoutes); // Use user routes
@@ -48,6 +56,9 @@ mongoose
     // use flutterwave routes
     app.use("/flw-api", flutterwaveRoutes);
     app.use("/wallet", splinxWalletRoutes);
+
+    // app admin management
+    app.use("/admin", adminRoutes);
 
     app.listen(PORT, () => {
       console.log(`👌✨Server running at http://localhost:${PORT}`);
