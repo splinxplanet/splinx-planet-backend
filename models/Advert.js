@@ -20,7 +20,7 @@ const advertSchema = new mongoose.Schema({
   },
   createdBy: { type: String, required: true },
   createdDate: { type: Date, default: Date.now },
-  adCost: { type: Number, required: true }
+  adsCost: { type: Number, required: true }
 }, { timestamps: true });
 
 const Advert = mongoose.model('Advert', advertSchema);
