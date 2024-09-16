@@ -16,6 +16,32 @@ exports.createAdmin = async (req, res) => {
   try {
     const { firstName, lastName, emailAddress, password, phoneNumber, userName, ...rest } = req.body;
 
+    // Function to generate the staffId in the format SP-0001
+    const generateStaffId = async () => {
+      let isUnique = false;
+      let staffId;
+      
+      while (!isUnique) {
+        // Generate random 4-digit number
+        const randomDigits = Math.floor(1000 + Math.random() * 9000); // Ensures a 4-digit number
+        
+        // Create the staffId in the format SP-#### (e.g., SP-1234)
+        staffId = `SP-${randomDigits}`;
+
+        // Check if this staffId is unique in the database
+        const existingAdmin = await Admin.findOne({ where: { staffId } });
+        if (!existingAdmin) {
+          isUnique = true;
+        }
+      }
+
+      return staffId;
+    };
+
+    // Generate the unique staffId
+    const staffId = await generateStaffId();
+
+    // Create a new admin with the generated staffId
     const newAdmin = await Admin.create({
       firstName,
       lastName,
@@ -23,17 +49,23 @@ exports.createAdmin = async (req, res) => {
       password,
       phoneNumber,
       userName,
+      staffId, // Store the generated staffId
       ...rest,
     });
 
-      // Send email with login details
-      await sendEmail(emailAddress, 'Admin Account Created', `Your account has been created. Login with username: ${emailAddress} and password: ${password}`);
-    
+    // Send email with login details
+    await sendEmail(
+      emailAddress,
+      'Admin Account Created',
+      `Your account has been created. Login with username: ${emailAddress} and password: ${password}`
+    );
+
     res.status(201).json({ success: true, data: newAdmin });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+
 
 // Login admin
 exports.loginAdmin = async (req, res) => {

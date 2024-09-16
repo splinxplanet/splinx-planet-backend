@@ -19,6 +19,7 @@ const splinxWalletRoutes = require("./routes/splinxWalletRoutes");
 
 // app admin management
 const adminRoutes = require("./routes/adminRoutes");
+const advertRoutes = require("./routes/advertRoutes");
 
 
 
@@ -59,6 +60,7 @@ mongoose
 
     // app admin management
     app.use("/admin", adminRoutes);
+    app.use("/advert", advertRoutes);
 
     app.listen(PORT, () => {
       console.log(`👌✨Server running at http://localhost:${PORT}`);
