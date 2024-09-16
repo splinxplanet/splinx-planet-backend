@@ -36,10 +36,26 @@ const withdrawalRequestSchema = new Schema({
     type: String,
     required: true,
   },
-  createdAt: {
-    type: Date,
-    default: Date.now,
+  accountName: {
+    type: String,
+    required: true,
   },
-});
+  amount: {
+    type: Number,
+    required: true,
+  },
+  status: {
+    type: String,
+    enum: ['pending', 'approved', 'rejected'],
+    default: 'pending',
+  },
+  rejectionReason: {
+    type: String,
+  },
+  requesterEmail: {
+    type: String,
+    required: true,
+  },
+}, { timestamps: true });
 
 module.exports = mongoose.model('WithdrawalRequest', withdrawalRequestSchema);

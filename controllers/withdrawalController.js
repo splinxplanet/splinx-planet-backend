@@ -1,9 +1,9 @@
 const WithdrawalRequest = require('../models/WithdrawalRequest');
-
+const sendEmail = require('../utils/sendEmail');
 // Submit Withdrawal Request
 exports.submitWithdrawalRequest = async (req, res) => {
   try {
-    const { creatorId, eventName, eventCost, eventId, totalPaidByMembers, bankName, accountNumber } = req.body;
+    const { creatorId, eventName, eventCost, eventId, totalPaidByMembers, bankName, accountNumber, accountName, amount, requesterEmail } = req.body;
 
     const newRequest = new WithdrawalRequest({
       eventId,
@@ -13,6 +13,9 @@ exports.submitWithdrawalRequest = async (req, res) => {
       totalPaidByMembers,
       bankName,
       accountNumber,
+      accountName,
+      amount,
+      requesterEmail,
     });
 
     // check if the user has already submitted a withdrawal request for the event
@@ -40,9 +43,16 @@ exports.approveWithdrawal = async (req, res) => {
       return res.status(404).json({ message: 'Withdrawal request not found.' });
     }
 
+    // call the payment gateway API here to make payment to the user
     withdrawalRequest.isApproved = true;
+    withdrawalRequest.status = 'approved';
+
     await withdrawalRequest.save();
     res.status(200).json({ message: 'Withdrawal request approved successfully.' });
+    // send email to user
+    const message = `Your withdrawal request for ${withdrawalRequest.eventName} has been approved. You will receive your payment shortly.`;
+    await sendEmail(withdrawalRequest.requesterEmail, 'Withdrawal Request Approved', message);
+
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -58,8 +68,14 @@ exports.denyWithdrawal = async (req, res) => {
       return res.status(404).json({ message: 'Withdrawal request not found.' });
     }
 
-    await withdrawalRequest.remove();
-    res.status(200).json({ message: 'Withdrawal request denied and removed.' });
+    withdrawalRequest.status = 'rejected';
+    await withdrawalRequest.save();
+    res.status(200).json({ message: 'Withdrawal request rejected successfully.' });
+
+    // send email to user
+    const message = `Your withdrawal request for ${withdrawalRequest.eventName} has been rejected. Reason: ${withdrawalRequest.rejectionReason}`;
+    await sendEmail(withdrawalRequest.requesterEmail, 'Withdrawal Request Rejected', message);
+
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -68,7 +84,8 @@ exports.denyWithdrawal = async (req, res) => {
 // Fetch All Withdrawal Requests
 exports.fetchAllWithdrawals = async (req, res) => {
   try {
-    const withdrawals = await WithdrawalRequest.find().populate('creatorId', 'name email');
+    const withdrawals = await WithdrawalRequest.find();
+    
     res.status(200).json(withdrawals);
   } catch (error) {
     res.status(500).json({ error: error.message });
