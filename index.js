@@ -1,10 +1,16 @@
+// Import necessary modules
 const express = require("express");
+const http = require("http");
+const { Server } = require("socket.io");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-// swagger
+
+// Swagger
 const swaggerUi = require('swagger-ui-express');
 const swaggerFile = require('./utils/swagger-output.json');
+
+// Routes
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const eventRoutes = require("./routes/eventRoutes");
@@ -13,16 +19,13 @@ const communityRoutes = require("./routes/communityRoutes");
 const postRoutes = require("./routes/postRoutes");
 const sendEmail = require("./routes/emailSender");
 const withdrawalRoutes = require("./routes/withdrawalRoutes");
-// import flutterwave plan
 const flutterwaveRoutes = require("./routes/flutterwaveRoutes");
 const splinxWalletRoutes = require("./routes/splinxWalletRoutes");
-
-// app admin management
 const adminRoutes = require("./routes/adminRoutes");
 const advertRoutes = require("./routes/advertRoutes");
 const promoCodeRoutes = require("./routes/promoCodeRoutes");
-
-
+const pushNotificationRoutes = require("./routes/notificationRoutes");
+const emailNotificationRoutes = require("./routes/emailNotificationRoutes");
 
 // dotenv config
 require("dotenv").config();
@@ -30,45 +33,75 @@ require("dotenv").config();
 const PORT = process.env.PORT || 3000;
 const MONGODB_URI = process.env.MONGODB_URI;
 
-// Connect to MongoDB
-mongoose
-  .connect(MONGODB_URI)
+// Initialize Express app
+const app = express();
+
+// Set up server with Socket.IO
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST']
+  }
+});
+
+// MongoDB connection
+mongoose.connect(MONGODB_URI)
   .then(() => {
     console.log("✔✨✨Connected to MongoDB");
 
-    const app = express(); // Create Express app
+    // Middleware
+    app.use(bodyParser.json()); // Parse incoming JSON requests
+    app.use(cors()); // Enable CORS
 
-    app.use(bodyParser.json()); // JSON body parser middleware
-    app.use(cors()); // Enable CORS middleware
-    // restrict requests
-    // app.use(cors({
-    //     origin: "https://example.com"
-    // }));
-    app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile))
+    // Swagger documentation
+    app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
-
-    app.use("/auth", authRoutes); // Use auth routes
-    app.use("/user", userRoutes); // Use user routes
-    app.use("/event", eventRoutes); // Use event routes
-    app.use("/message", messageRoutes); // use message routes
-    app.use("/community", communityRoutes); // use community routes
-    app.use("/post", postRoutes); // use post routes
-    app.use("/email", sendEmail); // use email routes
-    app.use("/withdrawal", withdrawalRoutes); // use withdrawal routes
-    // use flutterwave routes
+    // Routes
+    app.use("/auth", authRoutes);
+    app.use("/user", userRoutes);
+    app.use("/event", eventRoutes);
+    app.use("/message", messageRoutes);
+    app.use("/community", communityRoutes);
+    app.use("/post", postRoutes);
+    app.use("/email", sendEmail);
+    app.use("/withdrawal", withdrawalRoutes);
     app.use("/flw-api", flutterwaveRoutes);
     app.use("/wallet", splinxWalletRoutes);
-
-    // app admin management
     app.use("/admin", adminRoutes);
     app.use("/advert", advertRoutes);
     app.use("/promo", promoCodeRoutes);
+    app.use("/notification", pushNotificationRoutes);
+    app.use("/email-notification", emailNotificationRoutes);
 
-    app.listen(PORT, () => {
-      console.log(`👌✨Server running at http://localhost:${PORT}`);
+    // Socket.IO connection
+    io.on('connection', (socket) => {
+      console.log('User connected');
+
+      socket.on('join', (userId) => {
+        socket.join(userId);  // User joins their own room
+        console.log(`User ${userId} joined their room`);
+      });
+
+      socket.on('send-notification', (data) => {
+        io.to(data.userId).emit('receive-notification', {
+          title: data.title,
+          message: data.message,
+          type: data.type
+        });
+      });
+
+      socket.on('disconnect', () => {
+        console.log('User disconnected');
+      });
     });
 
-    // export app
-    module.exports = app;
+    // Start the server using the http server with Socket.IO
+    server.listen(PORT, () => {
+      console.log(`👌✨Server running at http://localhost:${PORT}`);
+    });
   })
-  .catch((err) => console.log(err));
+  .catch((err) => console.log("MongoDB connection error:", err));
+
+// Export the app for testing or external usage
+module.exports = app;

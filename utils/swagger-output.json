@@ -189,9 +189,35 @@
     "/admin-forgot-password": {
       "post": {
         "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "emailAddress": {
+                  "example": "any"
+                },
+                "newPassword": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
@@ -2633,6 +2659,15 @@
                 },
                 "accountNumber": {
                   "example": "any"
+                },
+                "accountName": {
+                  "example": "any"
+                },
+                "amount": {
+                  "example": "any"
+                },
+                "requesterEmail": {
+                  "example": "any"
                 }
               }
             }
@@ -2651,7 +2686,7 @@
         }
       }
     },
-    "/withdrawal/approve/{id}": {
+    "/approval/{id}": {
       "put": {
         "description": "",
         "parameters": [
@@ -2675,7 +2710,7 @@
         }
       }
     },
-    "/withdrawal/deny/{id}": {
+    "/denied/{id}": {
       "delete": {
         "description": "",
         "parameters": [
