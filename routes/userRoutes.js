@@ -21,6 +21,8 @@ router.put("/forgot-password", userController.forgotPassword);
 // verify user email
 router.get("/verify-email/:emailAddress", userController.verifyEmail);
 
+// Route for account deletion request
+router.post('/request-account-deletion', userController.requestAccountDeletion);
 // Delete user profile
 router.delete("/delete-user/:userId", authenticationToken, userController.deleteUserProfile);
 
