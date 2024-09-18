@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
+const sendEmail = require('../utils/sendEmail');
 
 // Get user profile
 exports.getUserProfile = async (req, res) => {
@@ -82,6 +83,40 @@ exports.updateUserProfile = async (req, res) => {
     res.status(200).json({ message: "User profile updated successfully" });
   } catch (error) {
     res.status(500).send(error.message);
+  }
+};
+
+// Handle account deletion request
+exports.requestAccountDeletion = async (req, res) => {
+  try {
+    const { username, email, reason } = req.body;
+
+    // Check if user exists
+    const user = await User.findOne({ username, email });
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // You could optionally log this request into a database or notify the admin via email
+    const deletionRequest = {
+      subject: 'Account Deletion Request',
+      html: `<p>User <strong>${username}</strong> with email <strong>${email}</strong> has requested account deletion.</p><p>Reason: ${reason || 'No reason provided'}</p>`
+    };
+
+    // Send an email to the admin notifying about the deletion request (optional)
+    await sendEmail('splinxplanent@gmail.com', deletionRequest.subject, deletionRequest.html);
+
+    res.status(200).json({ success: true, message: 'Your account deletion request has been submitted. We will process it shortly.' });
+
+    // Optionally mark the user for deletion (e.g., a flag to delete later)
+    // user.isDeletionRequested = true;
+    // await user.save();
+
+    // Or, if you want to delete the user immediately:
+    // await User.deleteOne({ _id: user._id });
+  } catch (error) {
+    console.error('Error processing account deletion request:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
   }
 };
 
