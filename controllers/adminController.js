@@ -40,7 +40,6 @@ exports.createAdmin = async (req, res) => {
 
     // Generate the unique staffId
     const staffId = await generateStaffId();
-    console.log("Staff id", staffId)
 
     // Create a new admin with the generated staffId
     const newAdmin = await Admin.create({
@@ -115,11 +114,29 @@ exports.getAdminById = async (req, res) => {
 // Edit an admin account
 exports.updateAdmin = async (req, res) => {
   try {
-    const updatedAdmin = await Admin.findByIdAndUpdate(req.params.id, req.body, {
+    // Filter out undefined or null properties from req.body
+    const updatedFields = {};
+    for (let key in req.body) {
+      if (req.body[key] !== undefined && req.body[key] !== null) {
+        updatedFields[key] = req.body[key];
+      }
+    }
+
+    // Check if password needs to be hashed
+    if (updatedFields.password && !updatedFields.password.startsWith('$2')) {
+      const salt = await bcrypt.genSalt(10);
+      updatedFields.password = await bcrypt.hash(updatedFields.password, salt);
+    }
+
+    // Update admin with the filtered fields
+    const updatedAdmin = await Admin.findByIdAndUpdate(req.params.id, updatedFields, {
       new: true,
       runValidators: true,
     });
-    if (!updatedAdmin) return res.status(404).json({ success: false, message: 'Admin not found' });
+
+    if (!updatedAdmin) {
+      return res.status(404).json({ success: false, message: 'Admin not found' });
+    }
 
     res.status(200).json({ success: true, data: updatedAdmin });
   } catch (error) {
