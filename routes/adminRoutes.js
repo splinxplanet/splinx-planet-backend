@@ -9,6 +9,7 @@ const {
   forgotPassword,
 } = require('../controllers/adminController');
 const router = express.Router();
+const authenticationToken = require("../utils/validation"); // Auth middleware
 
 /**
  * @swagger
@@ -40,7 +41,7 @@ const router = express.Router();
  *       400:
  *         description: Invalid input
  */
-router.post('/admin-create', createAdmin);
+router.post('/admin-create', authenticationToken, createAdmin);
 
 /**
  * @swagger
@@ -100,7 +101,7 @@ router.post('/admin-login', loginAdmin);
  *       400:
  *         description: Invalid pagination parameters
  */
-router.get('/admin-get-all', getAllAdmins);
+router.get('/admin-get-all', authenticationToken, getAllAdmins);
 
 /**
  * @swagger
@@ -122,7 +123,7 @@ router.get('/admin-get-all', getAllAdmins);
  *       404:
  *         description: Admin not found
  */
-router.get('/get-admin/:id', getAdminById);
+router.get('/get-admin/:id', authenticationToken, getAdminById);
 
 /**
  * @swagger
@@ -158,7 +159,7 @@ router.get('/get-admin/:id', getAdminById);
  *       400:
  *         description: Invalid input
  */
-router.put('/admin-update/:id', updateAdmin);
+router.put('/admin-update/:id', authenticationToken, updateAdmin);
 
 /**
  * @swagger
@@ -180,7 +181,7 @@ router.put('/admin-update/:id', updateAdmin);
  *       404:
  *         description: Admin not found
  */
-router.delete('/admin-delete/:id', deleteAdmin);
+router.delete('/admin-delete/:id', authenticationToken, deleteAdmin);
 
 /**
  * @swagger
