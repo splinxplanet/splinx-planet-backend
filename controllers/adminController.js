@@ -40,6 +40,7 @@ exports.createAdmin = async (req, res) => {
 
     // Generate the unique staffId
     const staffId = await generateStaffId();
+    console.log("Staff id", staffId)
 
     // Create a new admin with the generated staffId
     const newAdmin = await Admin.create({
