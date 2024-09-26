@@ -4,12 +4,14 @@ const sendEmail = require('../utils/sendEmail'); // Function to send email
 // Send new email to single or multiple recipients
 exports.sendEmailNotification = async (req, res) => {
     try {
-        const { subject, recipients, html } = req.body;
+        const { createdBy, subject, recipients, html } = req.body;
 
         // Create email entry in the database
         const email = new Email({
+            createdBy
             subject,
             recipients,
+            recipientsCount: recipients.length,
             html,
             status: 'pending'
         });
