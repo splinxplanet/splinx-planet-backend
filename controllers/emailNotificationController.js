@@ -8,7 +8,7 @@ exports.sendEmailNotification = async (req, res) => {
 
         // Create email entry in the database
         const email = new Email({
-            createdBy
+            createdBy,
             subject,
             recipients,
             recipientsCount: recipients.length,
