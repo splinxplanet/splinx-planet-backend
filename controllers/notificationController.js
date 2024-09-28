@@ -61,11 +61,11 @@ exports.resendNotification = async (req, res) => {
     }
 
     // Emit the notification event again using Socket.IO
-    req.io.to(notification.userId).emit('receive-notification', {
-      title: notification.title,
-      message: notification.message,
-      type: notification.type
-    });
+    // req.io.to(notification.userId).emit('receive-notification', {
+    //   title: notification.title,
+    //   message: notification.message,
+    //   type: notification.type
+    // });
 
     res.status(200).json({ success: true, message: 'Notification resent successfully' });
   } catch (error) {
