@@ -35,25 +35,6 @@ exports.getAllUsersProfile = async (req, res) => {
 // Update user profile
 exports.updateUserProfile = async (req, res) => {
   const { userId } = req.params;
-  const {
-    firstName,
-    lastName,
-    dob,
-    age,
-    bio,
-    profileImg,
-    phoneNumber,
-    country,
-    city,
-    homeAddress,
-    enableNotification,
-    enableSmsNotification,
-    enableEmailNotification,
-    isSubscriber,
-    subscriptionPlan,
-    myInterest,
-    hashtagFollowing
-  } = req.body;
 
   try {
     const user = await User.findById(userId);
@@ -61,28 +42,19 @@ exports.updateUserProfile = async (req, res) => {
       return res.status(404).send("User not found");
     }
 
-    // Update the fields if they are provided in the request body
-    if (firstName !== undefined) user.firstName = firstName;
-    if (lastName !== undefined) user.lastName = lastName;
-    if (dob !== undefined) user.dob = dob;
-    if (age !== undefined) user.age = age;
-    if (bio !== undefined) user.bio = bio;
-    if (profileImg !== undefined) user.profileImg = profileImg;
-    if (phoneNumber !== undefined) user.phoneNumber = phoneNumber;
-    if (country !== undefined) user.country = country;
-    if (city !== undefined) user.city = city;
-    if (homeAddress !== undefined) user.homeAddress = homeAddress;
-    if (enableNotification !== undefined) user.enableNotification = enableNotification;
-    if (enableSmsNotification !== undefined) user.enableSmsNotification = enableSmsNotification;
-    if (enableEmailNotification !== undefined) user.enableEmailNotification = enableEmailNotification;
-    if (isSubscriber !== undefined) user.isSubscriber = isSubscriber;
-    if (subscriptionPlan !== undefined) user.subscriptionPlan = subscriptionPlan;
+    // Loop through request body and update only modified fields
+    Object.keys(req.body).forEach((key) => {
+      if (req.body[key] !== undefined && req.body[key] !== user[key]) {
+        user[key] = req.body[key];
+      }
+    });
 
     await user.save();
 
     res.status(200).json({ message: "User profile updated successfully" });
   } catch (error) {
-    res.status(500).send(error.message);
+    console.error(error); // Log the full error
+    res.status(500).json({ message: "Internal Server Error", error: error.message });
   }
 };
 
