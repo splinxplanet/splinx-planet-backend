@@ -41,9 +41,9 @@ exports.sendNotificationToMultipleUsers = async (req, res) => {
     }));
 
     // Send real-time notifications using Socket.IO
-    userIds.forEach((userId) => {
-      req.io.to(userId).emit('receive-notification', { title, message, type });
-    });
+    // userIds.forEach((userId) => {
+    //   req.io.to(userId).emit('receive-notification', { title, message, type });
+    // });
 
     res.status(201).json({ success: true, data: notifications });
   } catch (error) {
