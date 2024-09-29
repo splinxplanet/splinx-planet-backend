@@ -1,4 +1,8 @@
 const Admin = require('../models/Admin');
+const User = require('../models/User');
+const Event = require('../models/Event');
+const EmailNotification = require('../models/EmailNotification');
+const Advert = require('../models/Advert');
 const jwt = require('jsonwebtoken');
 const bcrypt = require("bcrypt");
 const sendEmail = require('../utils/sendEmail');
@@ -9,6 +13,34 @@ const generateToken = (admin) => {
   return jwt.sign({ id: admin._id, role: admin.role }, process.env.JWT_SECRET, {
     expiresIn: '7d',
   });
+};
+
+// count user, email sent, advert and event created stat
+exports.dashboardStat = async (req, res) => {
+  try {
+    // Get total users count
+    const totalUsers = await User.countDocuments();
+
+    // Get total unique emails count
+    const totalEmails = await EmailNotification.countDocuments();
+
+    // Get total adverts count
+    const totalAdverts = await Advert.countDocuments();
+
+    // Get total events count
+    const totalEvents = await Event.countDocuments();
+
+    // Send the response with the counts
+    res.status(200).json({
+      totalUsers,
+      totalEmails,
+      totalAdverts,
+      totalEvents,
+    });
+  } catch (error) {
+    console.error('Error fetching counts:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
 };
 
 // Create a new admin
@@ -65,7 +97,6 @@ exports.createAdmin = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
-
 
 // Login admin
 exports.loginAdmin = async (req, res) => {

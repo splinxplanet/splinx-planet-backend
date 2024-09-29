@@ -7,9 +7,13 @@ const {
   updateAdmin,
   deleteAdmin,
   forgotPassword,
+  dashboardStat,
 } = require('../controllers/adminController');
 const router = express.Router();
 const authenticationToken = require("../utils/validation"); // Auth middleware
+
+// get dashboard stat
+router.get('/stat', dashboardStat);
 
 /**
  * @swagger
