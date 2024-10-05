@@ -27,6 +27,7 @@ const promoCodeRoutes = require("./routes/promoCodeRoutes");
 const pushNotificationRoutes = require("./routes/notificationRoutes");
 const emailNotificationRoutes = require("./routes/emailNotificationRoutes");
 const leadsRoutes = require("./routes/leadsRoutes");
+const subscriptionPlanRoutes = require("./routes/subscriptionPlanRoutes");
 
 // dotenv config
 require("dotenv").config();
@@ -75,6 +76,7 @@ mongoose.connect(MONGODB_URI)
     app.use("/notification", pushNotificationRoutes);
     app.use("/email-notification", emailNotificationRoutes);
     app.use("/leads", leadsRoutes);
+    app.use("/subscription-plan", subscriptionPlanRoutes);
 
     // Socket.IO connection
     io.on('connection', (socket) => {
