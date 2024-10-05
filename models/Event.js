@@ -17,6 +17,7 @@ const eventSchema = new mongoose.Schema({
   eventLocation: { type: String, required: true },
   eventUserRules: String,
   eventCreator: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  eventBy: { type: String, default: 'user' },
   eventCost: Number,
   isEventCostSplitted: {
     type: Boolean,
