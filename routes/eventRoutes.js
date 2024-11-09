@@ -100,7 +100,7 @@ router.delete('/:eventId', authenticationToken, eventController.deleteEvent);
  *               items:
  *                 $ref: '#/components/schemas/Event'
  */
-router.get('/', authenticationToken, eventController.getAllEvents);
+router.get('/',  eventController.getAllEvents);
 
 // Get a single event
 /**

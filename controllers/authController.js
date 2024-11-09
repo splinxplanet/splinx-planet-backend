@@ -28,7 +28,6 @@ exports.registerUser = async (req, res) => {
   // Save user to database
   await newUser.save();
 
-  // res.status(201).json({ message: "User registered successfully" });
   res.status(201).json({ message: "User registered successfully" });
 };
 
