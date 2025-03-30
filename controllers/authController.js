@@ -14,14 +14,16 @@ const textflow = require("textflow.js");
 textflow.useKey(TEXTFLOW_API_KEY);
 // send otp verification code
 exports.sendOTP = async (req, res) => {
-   const { phoneNumber } = req.body
+  const { phoneNumber } = req.body.data;
 
     let result = await textflow.sendVerificationSMS(phoneNumber);
 
-    if (result.ok) //send sms here
-        return res.status(200).json({ success: true });
-
+  if (result.ok) {
+      return res.status(200).json({ success: true });
+  } else { 
     return res.status(400).json({ success: false });
+    }
+
 }
 // verify otp
 exports.verifyOTP = async (req, res) => {
