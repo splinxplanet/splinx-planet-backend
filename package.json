@@ -28,6 +28,7 @@
     "nodemailer": "^6.9.14",
     "socket.io": "^4.7.5",
     "swagger-ui-express": "^5.0.1",
+    "textflow.js": "^0.1.4",
     "winston": "^3.11.0"
   },
   "devDependencies": {

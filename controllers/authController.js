@@ -6,6 +6,35 @@ require("dotenv").config();
 const cloudinary = require("../utils/imageUpload");
 
 const JWT_SECRET = process.env.JWT_SECRET;
+const TEXTFLOW_API_KEY = process.env.TEXTFLOW_KEY;
+
+// phone number otp verification
+const textflow = require("textflow.js");
+
+textflow.useKey(TEXTFLOW_API_KEY);
+// send otp verification code
+exports.sendOTP = async (req, res) => {
+   const { phoneNumber } = req.body
+
+    let result = await textflow.sendVerificationSMS(phoneNumber);
+
+    if (result.ok) //send sms here
+        return res.status(200).json({ success: true });
+
+    return res.status(400).json({ success: false });
+}
+// verify otp
+exports.verifyOTP = async (req, res) => {
+    const { phoneNumber, otpCode } = req.body
+
+    let result = await textflow.verifyCode(phoneNumber, otpCode);
+
+    if(!result.valid){
+        return res.status(400).json({ success: false });
+    }
+
+    return res.status(400).json({ success: true });
+}
 
 // Register user
 exports.registerUser = async (req, res) => {
