@@ -22,6 +22,11 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
   },
+  uploadedPhotos: [String],
+  instagram: String,
+  facebook: String,
+  tiktok: String,
+  snapchat: String,
   country: String,
   city: String,
   currency: {
