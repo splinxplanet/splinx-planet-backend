@@ -15,7 +15,7 @@ A brief description of your project.
 
 Instructions on how to install and set up your project.
 
-## Usage
+## Usage Guid
 
 Guidelines on how to use your project and any relevant examples.
 
