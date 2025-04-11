@@ -4,7 +4,7 @@ const sendEmail = require('../utils/sendEmail');
 
 // Get user profile
 exports.getUserProfile = async (req, res) => {
-    console.log(req.params.userId)
+   
     try {
         // Assuming req.userId contains the ID of the authenticated user
         const user = await User.findById(req.params.userId).select("-password");
@@ -23,7 +23,7 @@ exports.getUserProfile = async (req, res) => {
 // get all user profileImg, firstName, id, emailAddress 
 exports.getAllUsersProfile = async (req, res) => {
   try {
-    const users = await User.find().select("profileImg firstName lastName _id emailAddress dob bio phoneNumber country city isSubscriber subscriptionPlan");
+    const users = await User.find().select("profileImg firstName lastName _id emailAddress dob bio phoneNumber country city isSubscriber subscriptionPlan, uploadedPhotos, facebook, instagram, tiktok, snapchat");
 
     res.json(users);
   } catch (error) {
