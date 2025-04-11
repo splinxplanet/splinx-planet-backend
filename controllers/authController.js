@@ -110,7 +110,12 @@ exports.loginUser = async (req, res) => {
     bio: user.bio,
     myInterest: user.myInterest,
     hashtagFollowing: user.hashtagFollowing,
-    restrictedAccount: user.restrictedAccount
+    restrictedAccount: user.restrictedAccount,
+    facebook: user.facebook,
+    instagram: user.instagram,
+    snapchat: user.snapchat,
+    tiktok: user.tiktok,
+    uploadedPhotos: user.uploadedPhotos
   }
 
   res.json({ token, userProfile});
