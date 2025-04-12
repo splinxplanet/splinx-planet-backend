@@ -61,6 +61,7 @@ router.put('/:eventId', authenticationToken, eventController.updateEvent);
 router.post("/events/:eventId/join-request", authenticationToken, eventController.requestToJoinEvent);
 router.post("/events/:eventId/approve-request", authenticationToken, eventController.approveJoinRequest);
 router.post("/events/:eventId/decline-request", authenticationToken, eventController.declineJoinRequest);
+router.get("/events/:eventId/membership", authenticationToken, eventController.fetchMembership);
 
 
 // Delete an event

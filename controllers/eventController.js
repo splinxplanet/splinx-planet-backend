@@ -244,6 +244,44 @@ exports.declineJoinRequest = async (req, res) => {
   }
 };
 
+// fetch all events joined and requested membership
+exports.fetchMembership = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+
+    const event = await Event.findById(eventId)
+      .populate({
+        path: 'eventMembers.user',
+        select: 'firstName profileImg _id',
+      })
+      .populate({
+        path: 'joinRequests',
+        select: 'firstName profileImg _id',
+      });
+
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+
+    // Format eventMembers with their populated user info
+    const formattedMembers = event.eventMembers.map(member => ({
+      user: member.user,
+      isAllowReminder: member.isAllowReminder,
+      splitCost: member.splitCost,
+      paymentStatus: member.paymentStatus,
+    }));
+
+    return res.json({
+      eventMembers: formattedMembers,
+      joinRequests: event.joinRequests,
+    });
+
+  } catch (error) {
+    console.error('Error fetching event members:', error);
+    return res.status(500).json({ message: 'Server error' });
+  }
+}
+
 // Invite users
 exports.inviteUsersToEvent = async (req, res) => {
   try {
