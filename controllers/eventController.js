@@ -4,6 +4,7 @@ const User = require('../models/User');
 const SplitBill = require("../models/Splitbills"); 
 const WalletTransaction = require("../models/SplinxWallet"); 
 const sendEmail = require('../utils/sendEmail');
+const Community = require('../models/Community');
 
 const mongoose = require('mongoose');
 
@@ -141,6 +142,109 @@ exports.registerForEvent = async (req, res) => {
     res.status(200).json({ message: 'User registered for the event successfully' });
   } catch (error) {
     console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// modified implementation
+// join event request controller
+exports.requestToJoinEvent = async (req, res) => {
+  const { eventId } = req.params;
+  const { userId } = req.body;
+
+  try {
+    const event = await Event.findById(eventId).populate("eventCreator");
+    if (!event) return res.status(404).json({ message: "Event not found" });
+
+    if (event.joinRequests.includes(userId) || event.eventMembers.some(member => member.user.toString() === userId)) {
+      return res.status(400).json({ message: "Already requested or member of the event" });
+    }
+
+    event.joinRequests.push(userId);
+    await event.save();
+
+    // Send notification to event creator (email or app notification)
+    const creator = event.eventCreator;
+    const user = await User.findById(userId);
+
+    await sendEmail({
+      to: creator.email,
+      subject: `New Join Request for Event: ${event.eventName}`,
+      text: `${user.name} has requested to join your event "${event.eventName}".`,
+    });
+
+    res.status(200).json({ message: "Join request sent successfully" });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// approve event request controller
+exports.approveJoinRequest = async (req, res) => {
+  const { eventId } = req.params;
+  const { userId } = req.body;
+
+  try {
+    const event = await Event.findById(eventId);
+    if (!event) return res.status(404).json({ message: "Event not found" });
+
+    // Remove from joinRequests
+    event.joinRequests = event.joinRequests.filter(id => id.toString() !== userId);
+
+    // Add to eventMembers
+    event.eventMembers.push({
+      user: userId,
+      splitCost: 0,
+      paymentStatus: "pending",
+    });
+
+    await event.save();
+
+    // Add to community
+    const community = await Community.findOne({ communityName: event.eventName });
+    if (community && !community.communityMembers.includes(userId)) {
+      community.communityMembers.push(userId);
+      await community.save();
+    }
+
+    // Notify user
+    const user = await User.findById(userId);
+    await sendEmail({
+      to: user.email,
+      subject: `Request Approved: ${event.eventName}`,
+      text: `Your request to join "${event.eventName}" has been approved.`,
+    });
+
+    res.status(200).json({ message: "User approved and added to event and community" });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// decline event request controller
+exports.declineJoinRequest = async (req, res) => {
+  const { eventId } = req.params;
+  const { userId } = req.body;
+
+  try {
+    const event = await Event.findById(eventId);
+    if (!event) return res.status(404).json({ message: "Event not found" });
+
+    event.joinRequests = event.joinRequests.filter(id => id.toString() !== userId);
+    await event.save();
+
+    const user = await User.findById(userId);
+    await sendEmail({
+      to: user.email,
+      subject: `Request Declined: ${event.eventName}`,
+      text: `Your request to join "${event.eventName}" has been declined.`,
+    });
+
+    res.status(200).json({ message: "Join request declined" });
+
+  } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };

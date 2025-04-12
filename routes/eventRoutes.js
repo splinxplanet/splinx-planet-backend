@@ -57,6 +57,12 @@ router.post('/', authenticationToken, eventController.createEvent);
  */
 router.put('/:eventId', authenticationToken, eventController.updateEvent);
 
+// new modification for event route
+router.post("/events/:eventId/join-request", authenticationToken, eventController.requestToJoinEvent);
+router.post("/events/:eventId/approve-request", authenticationToken, eventController.approveJoinRequest);
+router.post("/events/:eventId/decline-request", authenticationToken, eventController.declineJoinRequest);
+
+
 // Delete an event
 /**
  * @swagger

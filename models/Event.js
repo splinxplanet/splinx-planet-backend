@@ -36,7 +36,8 @@ const eventSchema = new mongoose.Schema({
   isPopular: { type: Boolean, default: false },
   isUpcoming: { type: Boolean, default: true },
   isOpen: { type: Boolean, default: true },
-  eventMembers: [eventMemberSchema] // Use the eventMemberSchema for eventMembers
+  eventMembers: [eventMemberSchema], // Use the eventMemberSchema for eventMembers
+  joinRequests: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 },
   { timestamps: true }
 );
