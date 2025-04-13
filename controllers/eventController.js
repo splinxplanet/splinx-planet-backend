@@ -264,9 +264,14 @@ exports.fetchMembership = async (req, res) => {
     }
 
     // Format eventMembers with their populated user info
-    const formattedMembers = event.eventMembers.map(member => ({
-      user: member.user,
-    }));
+   const formattedMembers = event.eventMembers.map(member => {
+      const { _id, firstName, profileImg } = member.user;
+      return {
+        id: _id,
+        userName: firstName,
+        profileImg,
+      };
+    });
 
     return res.json({
       eventMembers: formattedMembers,
