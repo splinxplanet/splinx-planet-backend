@@ -164,10 +164,10 @@ exports.requestToJoinEvent = async (req, res) => {
     await event.save();
 
     // Send notification to event creator (email or app notification)
-    const creator = event.eventCreator;
+    const creator = await User.findById(event.eventCreator);
     const user = await User.findById(userId);
 
-    const sentEmail = await sendEmail(creator.email, `New Join Request for Event: ${event.eventName}`, `${user.name} has requested to join your event "${event.eventName}".`,
+    const sentEmail = await sendEmail(creator.emailAddress, `New Join Request for Event: ${event.eventName}`, `${user.name} has requested to join your event "${event.eventName}".`,
     );
 
     res.status(200).json({ message: "Join request sent successfully" });
@@ -207,7 +207,7 @@ exports.approveJoinRequest = async (req, res) => {
 
     // Notify user
     const user = await User.findById(userId);
-    const sentEmail = await sendEmail(user.email, `Request Approved: ${event.eventName}`, `Your request to join "${event.eventName}" has been approved.`,
+    const sentEmail = await sendEmail(user.emailAddress, `Request Approved: ${event.eventName}`, `Your request to join "${event.eventName}" has been approved.`,
     );
 
     console.log(sentEmail);
@@ -232,7 +232,7 @@ exports.declineJoinRequest = async (req, res) => {
     await event.save();
 
     const user = await User.findById(userId);
-    const sentEmail = await sendEmail( user.email, `Request Declined: ${event.eventName}`, `Your request to join "${event.eventName}" has been declined.`,
+    const sentEmail = await sendEmail( user.emailAddress, `Request Declined: ${event.eventName}`, `Your request to join "${event.eventName}" has been declined.`,
     );
 
     console.log(sentEmail)
