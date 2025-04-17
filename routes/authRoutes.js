@@ -16,9 +16,9 @@ router.post("/login", authController.loginUser);
 router.post("/forgot-password", authController.forgotPassword);
 
 // Endpoint to check if user exists by email
-router.post("/check-email", userController.checkUserByEmail);
+router.post("/check-email", authController.checkUserByEmail);
 
 // Endpoint to check if user exists by phone number
-router.post("/check-phone", userController.checkUserByPhone);
+router.post("/check-phone", authController.checkUserByPhone);
 
 module.exports = router;
