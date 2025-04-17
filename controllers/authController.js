@@ -148,29 +148,48 @@ exports.forgotPassword = async (req, res) => {
     res.json({ message: "Password reset link sent to your email" });
 }
 
-// Check if a user exists by phone number
-exports.checkUserByPhoneNumber = async (req, res) => {
-  const { phoneNumber } = req.body;
-
-  // Validate phone number
-  if (!phoneNumber) {
-    return res.status(400).json({ message: "Phone number is required" });
-  }
-
+// email and phone number check
+// Check if user exists by email
+exports.checkUserByEmail = async (req, res) => {
   try {
-    // Find user by phone number
+    const { emailAddress } = req.body;
+
+    if (!emailAddress) {
+      return res.status(400).json({ message: "Email address is required" });
+    }
+
+    const user = await User.findOne({ emailAddress: emailAddress.toLowerCase() });
+
+    if (user) {
+      return res.status(200).json({ exists: true, message: "User with this email exists" });
+    } else {
+      return res.status(404).json({ exists: false, message: "No user found with this email" });
+    }
+  } catch (error) {
+    console.error("Error checking user by email:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Check if user exists by phone number
+exports.checkUserByPhone = async (req, res) => {
+  try {
+    const { phoneNumber } = req.body;
+
+    if (!phoneNumber) {
+      return res.status(400).json({ message: "Phone number is required" });
+    }
+
     const user = await User.findOne({ phoneNumber });
 
     if (user) {
-      // User exists
-      return res.status(200).json({ exists: true });
+      return res.status(200).json({ exists: true, message: "User with this phone number exists" });
     } else {
-      // User does not exist
-      return res.status(200).json({ exists: false });
+      return res.status(404).json({ exists: false, message: "No user found with this phone number" });
     }
   } catch (error) {
     console.error("Error checking user by phone number:", error);
-    return res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error" });
   }
 };
 
