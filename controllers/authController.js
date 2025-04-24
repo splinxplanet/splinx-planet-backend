@@ -150,6 +150,7 @@ exports.forgotPassword = async (req, res) => {
 
 // email and phone number check
 // Check if user exists by email
+// server checking
 exports.checkUserByEmail = async (req, res) => {
   try {
     const { emailAddress } = req.body;
