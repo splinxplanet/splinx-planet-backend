@@ -59,6 +59,11 @@ mongoose.connect(MONGODB_URI)
     // Swagger documentation
     app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
+    // test endpoint
+    app.get("/", (req, res) => {
+      res.send("API server is running🥰");
+    });
+
     // Routes
     app.use("/auth", authRoutes);
     app.use("/user", userRoutes);
