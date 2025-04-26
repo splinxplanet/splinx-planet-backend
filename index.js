@@ -54,7 +54,14 @@ mongoose.connect(MONGODB_URI)
 
     // Middleware
     app.use(bodyParser.json()); // Parse incoming JSON requests
-    app.use(cors()); // Enable CORS
+
+    const corsOptions = {
+      origin: '*', // allow all origins (you can restrict if needed)
+      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], // allow only specific HTTP methods
+      allowedHeaders: ['Content-Type', 'Authorization'], // allow specific headers
+    };
+    app.use(cors(corsOptions));
+ // Enable CORS
 
     // Swagger documentation
     app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile));
