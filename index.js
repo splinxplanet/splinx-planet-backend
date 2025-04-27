@@ -58,7 +58,6 @@ mongoose.connect(MONGODB_URI)
     const corsOptions = {
       origin: '*', // allow all origins (you can restrict if needed)
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], // allow only specific HTTP methods
-      allowedHeaders: ['Content-Type', 'Authorization'], // allow specific headers
     };
     app.use(cors(corsOptions));
  // Enable CORS
