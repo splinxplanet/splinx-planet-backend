@@ -120,6 +120,10 @@ const userSchema = new mongoose.Schema({
     type: Object,
     default: {},
   },
+  isOnline: {
+    type: Boolean,
+    default: false,
+  }
 },
     { timestamps: true }
 );

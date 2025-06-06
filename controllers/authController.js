@@ -84,6 +84,10 @@ exports.loginUser = async (req, res) => {
     expiresIn: "1d",
   });
 
+  // update isOnline status to true
+  user.isOnline = true;
+  await user.save();
+  
   // send user profile and token
   const userProfile = {
     _id: user._id,
@@ -115,7 +119,8 @@ exports.loginUser = async (req, res) => {
     instagram: user.instagram,
     snapchat: user.snapchat,
     tiktok: user.tiktok,
-    uploadedPhotos: user.uploadedPhotos
+    uploadedPhotos: user.uploadedPhotos,
+    isOnline: user.isOnline,
   }
 
   res.json({ token, userProfile});
