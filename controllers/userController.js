@@ -315,7 +315,7 @@ exports.loginFriends = async (req, res) => {
     const { userId } = req.params;
     const user = await User.findById(userId).populate(
       "friends",
-      "firstName emailAddress profileImg"
+      "firstName emailAddress profileImg isOnline"
     );
     const acceptedFriends = user.friends;
     res.json(acceptedFriends);
