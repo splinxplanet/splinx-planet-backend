@@ -89,7 +89,7 @@ mongoose.connect(MONGODB_URI)
 
     // Socket.IO setup
     // Socket handler
-    require('./sockets/chat')(io);
+    require('./socket/chat')(io);
 
     // Start the server using the http server with Socket.IO
     server.listen(PORT, () => {
