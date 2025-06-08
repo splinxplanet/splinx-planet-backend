@@ -49,29 +49,59 @@ exports.fetchMessages = async (req, res) => {
         { senderId: senderId, recipientId: recipientId },
         { senderId: recipientId, recipientId: senderId },
       ],
-    }).populate("senderId", "_id name");
+    })
+      .sort({ createdAt: -1 }) // Sort by newest first
+      .populate("senderId", "_id name");
 
     res.json(messages);
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal Server Error" });
   }
-}
+};
 
-// delete message controller
+
+// delete single message controller
 exports.deleteMessage = async (req, res) => {
   try {
-    const { messages } = req.body;
+    const { messageId } = req.params;
 
-    if (!Array.isArray(messages) || messages.length === 0) {
-      return res.status(400).json({ message: "invalid req body!" });
+    if (!messageId) {
+      return res.status(400).json({ message: "Message ID is required" });
     }
 
-    await Message.deleteMany({ _id: { $in: messages } });
+    const deletedMessage = await Message.findByIdAndDelete(messageId);
+
+    if (!deletedMessage) {
+      return res.status(404).json({ message: "Message not found" });
+    }
 
     res.json({ message: "Message deleted successfully" });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: "Internal Server" });
+    res.status(500).json({ error: "Internal Server Error" });
   }
-}
+};
+// mark message as read controller
+exports.markMessageAsRead = async (req, res) => {
+  try {
+    const { messageId } = req.params;
+
+    if (!messageId) {
+      return res.status(400).json({ message: "Message ID is required" });
+    }
+
+    const updatedMessage = await Message.findByIdAndUpdate(
+      messageId,
+      { read: true },
+      { new: true } // Return the updated document
+    );  
+    if (!updatedMessage) {
+      return res.status(404).json({ message: "Message not found" });
+    }
+    res.json({ message: "Message marked as read successfully", updatedMessage });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};

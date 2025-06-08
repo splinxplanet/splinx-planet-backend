@@ -28,6 +28,9 @@ router.get('/user/:userId', authenticationToken, messageController.getUserDetail
 router.get('/messages/:senderId/:recipientId', authenticationToken, messageController.fetchMessages);
 
 // endpoint to delete messages
-router.delete('/deleteMessage', authenticationToken, messageController.deleteMessage);
+router.delete('/deleteMessage/:messageId', authenticationToken, messageController.deleteMessage);
+
+// endpoint to mark message as read
+router.patch('/readMessage/:messageId', authenticationToken, messageController.markMessageAsRead);
 
 module.exports = router;
