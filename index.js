@@ -41,9 +41,8 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_URL || '*',
-    methods: ['GET', 'POST']
-  }
+    origin: '*',
+  },
 });
 
 // MongoDB connection
@@ -88,61 +87,9 @@ mongoose.connect(MONGODB_URI)
     app.use("/leads", leadsRoutes);
     app.use("/subscription-plan", subscriptionPlanRoutes);
 
-   // Store online users
-    let onlineUsers = new Map();
-
-    io.on("connection", (socket) => {
-      console.log("New client connected:", socket.id);
-
-      // Handle joining chat
-      socket.on("join", (userId) => {
-        onlineUsers.set(userId, socket.id);
-        io.emit("online-users", Array.from(onlineUsers.keys()));
-      });
-
-      // Handle typing
-      socket.on("typing", ({ senderId, recipientId }) => {
-        const recipientSocketId = onlineUsers.get(recipientId);
-        if (recipientSocketId) {
-          io.to(recipientSocketId).emit("typing", senderId);
-        }
-      });
-
-      // Handle stop typing
-      socket.on("stop-typing", ({ senderId, recipientId }) => {
-        const recipientSocketId = onlineUsers.get(recipientId);
-        if (recipientSocketId) {
-          io.to(recipientSocketId).emit("stop-typing", senderId);
-        }
-      });
-
-      // Handle sending message
-      socket.on("send-message", (messageData) => {
-        const recipientSocketId = onlineUsers.get(messageData.recipientId);
-        if (recipientSocketId) {
-          io.to(recipientSocketId).emit("receive-message", messageData);
-        }
-      });
-
-      // Handle read receipts
-      socket.on("read-message", ({ messageId, recipientId }) => {
-        const recipientSocketId = onlineUsers.get(recipientId);
-        if (recipientSocketId) {
-          io.to(recipientSocketId).emit("message-read", messageId);
-        }
-      });
-
-      socket.on("disconnect", () => {
-        console.log("Client disconnected:", socket.id);
-        for (let [userId, id] of onlineUsers.entries()) {
-          if (id === socket.id) {
-            onlineUsers.delete(userId);
-            break;
-          }
-        }
-        io.emit("online-users", Array.from(onlineUsers.keys()));
-      });
-    });
+    // Socket.IO setup
+    // Socket handler
+    require('./sockets/chat')(io);
 
     // Start the server using the http server with Socket.IO
     server.listen(PORT, () => {
