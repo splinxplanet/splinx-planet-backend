@@ -17,21 +17,6 @@ exports.postMessage = async (req, res) => {
     });
 
     await newMessage.save();
-
-    // Emit real-time message to recipient room (if connected)
-    if (io) {
-      [recipientId, senderId].forEach(id => {
-        io.to(id).emit("new-message", {
-          _id: newMessage._id,
-          senderId,
-          recipientId,
-          messageType,
-          message: messageText,
-          imageUrl,
-          createdAt: newMessage.createdAt,
-        });
-      });
-    }  
     res.status(200).json({ message: "Message sent Successfully" });
   } catch (error) {
     console.log(error);
