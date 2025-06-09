@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const withdrawalController = require('../controllers/withdrawalController');
+const authMiddleware = require("../utils/validation");
 
 // make a withdrawal request
-router.post('/withdraw-request', withdrawalController.submitWithdrawalRequest);
+router.post('/withdraw-request', authMiddleware, withdrawalController.submitWithdrawalRequest);
 
 // approve a withdrawal request
 router.put('/approval/:id', withdrawalController.approveWithdrawal);
