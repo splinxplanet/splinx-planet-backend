@@ -126,3 +126,21 @@ exports.fetchAllWithdrawals = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+// fetch user only withdrawal request using userId
+exports.fetchUserWithdrawal = async (req, res) => { 
+  try {
+    const { userId } = req.params;
+    const withdrawals = await WithdrawalRequest.find({ creatorId: userId });
+
+    if (!withdrawals || withdrawals.length === 0) {
+      return res.status(404).json({ message: 'No withdrawal  history found for this user.' });
+    }
+
+    res.status(200).json(withdrawals);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+

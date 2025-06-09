@@ -15,4 +15,7 @@ router.delete('/denied/:id', withdrawalController.denyWithdrawal);
 // fetch all withdrawals
 router.get('/withdrawals', withdrawalController.fetchAllWithdrawals);
 
+// fetch a single withdrawal request
+router.get('/withdrawal-history/:userId', authMiddleware, withdrawalController.fetchUserWithdrawal);
+
 module.exports = router;
