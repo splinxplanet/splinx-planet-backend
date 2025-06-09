@@ -49,13 +49,6 @@ const withdrawalRequestSchema = new Schema({
     enum: ['pending', 'approved', 'rejected'],
     default: 'pending',
   },
-  rejectionReason: {
-    type: String,
-  },
-  requesterEmail: {
-    type: String,
-    required: true,
-  },
 }, { timestamps: true });
 
 module.exports = mongoose.model('WithdrawalRequest', withdrawalRequestSchema);

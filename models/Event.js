@@ -27,6 +27,10 @@ const eventSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  isWithdrawalPaid: {
+    type: Boolean,
+    default: false
+  },
   totalPaidByMembers: {
     type: Number,
     default: 0
