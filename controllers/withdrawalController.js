@@ -143,4 +143,20 @@ exports.fetchUserWithdrawal = async (req, res) => {
   }
 };
 
+// delete a withdrawal request
+exports.deleteWithdrawalRequest = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const withdrawalRequest = await WithdrawalRequest.findByIdAndDelete(id);
+
+    if (!withdrawalRequest) {
+      return res.status(404).json({ message: 'Withdrawal request not found.' });
+    }
+
+    res.status(200).json({ message: 'Withdrawal request deleted successfully.' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 

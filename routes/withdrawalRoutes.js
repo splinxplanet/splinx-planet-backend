@@ -7,13 +7,16 @@ const authMiddleware = require("../utils/validation");
 router.post('/withdraw-request', authMiddleware, withdrawalController.submitWithdrawalRequest);
 
 // approve a withdrawal request
-router.put('/approval/:id', withdrawalController.approveWithdrawal);
+router.put('/approval/:id', authMiddleware, withdrawalController.approveWithdrawal);
 
 // deny a withdrawal request
-router.delete('/denied/:id', withdrawalController.denyWithdrawal);
+router.put('/denied/:id', authMiddleware,withdrawalController.denyWithdrawal);
+
+// delete a withdrawal request
+router.delete('/delete/:id', authMiddleware, withdrawalController.deleteWithdrawalRequest);
 
 // fetch all withdrawals
-router.get('/withdrawals', withdrawalController.fetchAllWithdrawals);
+router.get('/withdrawals', authMiddleware, withdrawalController.fetchAllWithdrawals);
 
 // fetch a single withdrawal request
 router.get('/withdrawal-history/:userId', authMiddleware, withdrawalController.fetchUserWithdrawal);
