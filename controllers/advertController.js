@@ -3,8 +3,10 @@ const Advert = require('../models/Advert');
 // Create a new advert
 exports.createAdvert = async (req, res) => {
   try {
+    const imagePath = req.file ? req.file.path : null;
     const newAdvert = await Advert.create({
       ...req.body,
+      image: imagePath, // Save the image path to DB
     });
     res.status(201).json({ success: true, data: newAdvert });
   } catch (error) {

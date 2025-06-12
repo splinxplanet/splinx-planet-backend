@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const advertController = require('../controllers/advertController');
 const authenticationToken = require("../utils/validation"); // Auth middleware
+const upload = require('../middlewares/upload');
 
 /**
  * @swagger
@@ -87,7 +88,7 @@ const authenticationToken = require("../utils/validation"); // Auth middleware
  *       500:
  *         description: Server error
  */
-router.post('/create', authenticationToken, advertController.createAdvert);
+router.post('/create', authenticationToken, upload.single('image'), advertController.createAdvert);
 
 /**
  * @swagger

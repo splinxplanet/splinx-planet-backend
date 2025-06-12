@@ -29,6 +29,7 @@ exports.submitWithdrawalRequest = async (req, res) => {
       eventId,
       creatorId,
       eventName: event.eventName,
+      holdDate: event.eventDate,
       eventCost: parseInt(event.eventCost),
       totalPaidByMembers: parseInt(event.totalPaidByMembers),
       bankName,
@@ -67,20 +68,29 @@ exports.approveWithdrawal = async (req, res) => {
       return res.status(404).json({ message: 'Withdrawal request not found.' });
     }
 
-    // call the payment gateway API here to make payment to the user
-    withdrawalRequest.isApproved = true;
-    withdrawalRequest.status = 'approved';
+    // check if event.totalPaidByMembers is >= amount requested
+    const isSufficient = parseInt(event.totalPaidByMembers) >= parseInt(withdrawalRequest.amount);
+    if (isSufficient) {
 
-    await withdrawalRequest.save();
+      // call the payment gateway API here to make payment to the user
 
-    // update the event to set isWithdrawalPaid to true
-    event.isWithdrawalPaid = true;
-    await event.save();
+      withdrawalRequest.isApproved = true;
+      withdrawalRequest.status = 'approved';
+  
+      await withdrawalRequest.save();
+  
+      // update the event to set isWithdrawalPaid to true
+      event.isWithdrawalPaid = true;
+      await event.save();
+  
+      res.status(200).json({ message: 'Withdrawal request approved successfully.' });
+      // send email to user
+      const message = `Your withdrawal request for ${withdrawalRequest.eventName} has been approved. You will receive your payment shortly.`;
+      await sendEmail(withdrawalRequest.requesterEmail, 'Withdrawal Request Approved', message);
+    } else {
+      return res.status(403).json({ message: 'Insufficient balance' });
+    }
 
-    res.status(200).json({ message: 'Withdrawal request approved successfully.' });
-    // send email to user
-    const message = `Your withdrawal request for ${withdrawalRequest.eventName} has been approved. You will receive your payment shortly.`;
-    await sendEmail(withdrawalRequest.requesterEmail, 'Withdrawal Request Approved', message);
 
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -108,7 +118,7 @@ exports.denyWithdrawal = async (req, res) => {
     res.status(200).json({ message: 'Withdrawal request rejected successfully.' });
 
     // send email to user
-    const message = `Your withdrawal request for ${withdrawalRequest.eventName} has been rejected. Reason: Your request did not meet the necessary criteria. Please contact support for more details.`;
+    const message = `Your withdrawal request for${withdrawalRequest.eventName} has been rejected. Reason: Your request did not meet the necessary criteria. Please contact support for more details.`;
     await sendEmail(withdrawalRequest.requesterEmail, 'Withdrawal Request Rejected', message);
 
   } catch (error) {
