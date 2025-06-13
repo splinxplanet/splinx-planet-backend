@@ -89,16 +89,21 @@ const upload = require('../middlewares/upload');
  *         description: Server error
  */
 router.post('/upload', upload.single('image'), (req, res) => {
-    try {
-      if (!req.file) {
-        return res.status(400).json({ message: 'No file uploaded' });
-      }
-  
-      const filePath = `/uploads/adverts/${req.file.filename}`;
-      return res.status(200).json({ url: filePath }); // or use absolute URL if needed
-    } catch (err) {
-      return res.status(500).json({ message: 'Upload failed', error: err.message });
+  try {
+    if (!req.file || !req.file.path) {
+      return res.status(400).json({ message: 'No image uploaded' });
     }
+
+    return res.status(200).json({
+      message: 'Upload successful',
+      imageUrl: req.file.path, // this is the Cloudinary URL
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: 'Image upload failed',
+      error: err.message,
+    });
+  }
 });
   
 router.post('/create', authenticationToken, upload.single('image'), advertController.createAdvert);
