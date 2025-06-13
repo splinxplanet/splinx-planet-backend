@@ -20,10 +20,7 @@ const withdrawalRequestSchema = new Schema({
     type: Number,
     required: true,
   },
-  holdDate: {
-    Type: Date,
-    default: Date.now,
-  },
+  holdDate: {type: Date},
   totalPaidByMembers: {
     type: Number,
     required: true,

@@ -1,5 +1,6 @@
 // Import necessary modules
 const express = require("express");
+const helmet = require("helmet");
 const http = require("http");
 const { Server } = require("socket.io");
 const mongoose = require("mongoose");
@@ -9,10 +10,6 @@ const path = require('path');
 // Swagger
 const swaggerUi = require('swagger-ui-express');
 const swaggerFile = require('./utils/swagger-output.json');
-
-// Files uploads
-// Serve the /uploads folder publicly
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes
 const authRoutes = require("./routes/authRoutes");
@@ -55,8 +52,15 @@ mongoose.connect(MONGODB_URI)
   .then(() => {
     console.log("✔✨✨Connected to MongoDB");
 
+    // secure express app
+    app.use(helmet());
+
     // Middleware
     app.use(express.json()); // Parse incoming JSON requests
+
+    // Files uploads
+    // Serve the /uploads folder publicly
+    app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
     const corsOptions = {
       origin: '*', // allow all origins (you can restrict if needed)
