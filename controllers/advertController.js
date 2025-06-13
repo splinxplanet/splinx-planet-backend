@@ -1,4 +1,7 @@
 const Advert = require('../models/Advert');
+const cloudinary = require('../utils/cloudinary');
+const extractPublicId = require('../utils/extractPublicId');
+
 
 // Create a new advert
 exports.createAdvert = async (req, res) => {
@@ -53,13 +56,26 @@ exports.updateAdvert = async (req, res) => {
 // Delete an advert
 exports.deleteAdvert = async (req, res) => {
   try {
-    const advert = await Advert.findByIdAndDelete(req.params.id);
+    const advert = await Advert.findById(req.params.id);
     if (!advert) {
-      return res.status(404).json({ success: false, message: 'Advert not found' });
+      return res.status(404).json({ message: 'Advert not found' });
     }
-    res.status(200).json({ success: true, message: 'Advert deleted successfully' });
+
+    // Delete image from Cloudinary if URL exists
+    if (advert.adsImage) {
+      const publicId = extractPublicId(advert.adsImage);
+      if (publicId) {
+        await cloudinary.uploader.destroy(publicId);
+      }
+    }
+
+    // Delete advert from database
+    await Advert.findByIdAndDelete(req.params.id);
+
+    res.status(200).json({ message: 'Advert deleted successfully' });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error('Delete Advert Error:', error.message);
+    res.status(500).json({ message: 'Failed to delete advert', error: error.message });
   }
 };
 
