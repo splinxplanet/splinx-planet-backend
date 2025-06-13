@@ -4,10 +4,15 @@ const http = require("http");
 const { Server } = require("socket.io");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const path = require('path');
 
 // Swagger
 const swaggerUi = require('swagger-ui-express');
 const swaggerFile = require('./utils/swagger-output.json');
+
+// Files uploads
+// Serve the /uploads folder publicly
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes
 const authRoutes = require("./routes/authRoutes");
