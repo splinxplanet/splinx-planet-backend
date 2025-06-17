@@ -2,6 +2,8 @@ const WithdrawalRequest = require('../models/WithdrawalRequest');
 const User = require('../models/User');
 const Event = require('../models/Event');
 const sendEmail = require('../utils/sendEmail');
+const Flutterwave = require('flutterwave-node-v3');
+
 // Submit Withdrawal Request
 exports.submitWithdrawalRequest = async (req, res) => {
   try {
@@ -58,6 +60,11 @@ exports.submitWithdrawalRequest = async (req, res) => {
 };
 
 // Approve Withdrawal
+const flw = new Flutterwave(
+	process.env.FLW_PUBLIC_KEY,
+	process.env.FLW_SECRET_KEY
+);
+
 exports.approveWithdrawal = async (req, res) => {
   try {
     const { id } = req.params;
@@ -70,18 +77,31 @@ exports.approveWithdrawal = async (req, res) => {
 
     // check if event.totalPaidByMembers is >= amount requested
     const isSufficient = parseInt(event.totalPaidByMembers) >= parseInt(withdrawalRequest.amount);
+
     if (isSufficient) {
 
       // call the payment gateway API here to make payment to the user
+      const details = {
+        account_bank: withdrawalRequest.bankName,
+        account_number: withdrawalRequest.accountNumber,
+        amount: withdrawalRequest.amount,
+        currency: 'NGN',
+        narration: 'Payment for events withdrawal',
+        reference: generateTransactionReference(),
+      };
 
-      withdrawalRequest.isApproved = true;
-      withdrawalRequest.status = 'approved';
+      flw.Transfer.initiate(details)
+        .then(() => {
+          // update the withdrawal request to set isApproved to true
+          withdrawalRequest.isApproved = true;
+          withdrawalRequest.status = 'approved';
+      
+          withdrawalRequest.save();
+          // update the event to set isWithdrawApproved to true
+          event.isWithdrawalPaid = true;
+        })
+        .catch(console.log);
   
-      await withdrawalRequest.save();
-  
-      // update the event to set isWithdrawalPaid to true
-      event.isWithdrawalPaid = true;
-      await event.save();
   
       res.status(200).json({ message: 'Withdrawal request approved successfully.' });
       // send email to user
