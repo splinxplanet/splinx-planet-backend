@@ -82,7 +82,7 @@ exports.approveWithdrawal = async (req, res) => {
 
       // call the payment gateway API here to make payment to the user
       const details = {
-        account_bank: withdrawalRequest.bankName,
+        account_bank: "044",
         account_number: withdrawalRequest.accountNumber,
         amount: withdrawalRequest.amount,
         currency: 'NGN',
