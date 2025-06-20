@@ -1,6 +1,7 @@
 
 const Event = require('../models/Event');
 const User = require('../models/User');
+const Admin = require('../models/Admin');
 const SplitBill = require("../models/Splitbills"); 
 const WalletTransaction = require("../models/SplinxWallet"); 
 const sendEmail = require('../utils/sendEmail');
@@ -166,8 +167,10 @@ exports.requestToJoinEvent = async (req, res) => {
     // Send notification to event creator (email or app notification)
     const creator = await User.findById(event.eventCreator);
     const user = await User.findById(userId);
+    // email address
+    const email = creator.emailAddress ? creator.emailAddress : "splinxplanent@gmail.com";
 
-    const sentEmail = await sendEmail(creator.emailAddress, `New Join Request for Event: ${event.eventName}`, `${user.firstName} ${user.lastName} from ${user.city}, has requested to join your event "${event.eventName}".`,
+    const sentEmail = await sendEmail(email, `New Join Request for Event: ${event.eventName}`, `${user.firstName} ${user.lastName} from ${user.city}, has requested to join your event "${event.eventName}".`,
     );
 
     res.status(200).json({ message: "Join request sent successfully" });
