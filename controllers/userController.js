@@ -64,7 +64,7 @@ exports.requestAccountDeletion = async (req, res) => {
     const { username, email, reason } = req.body;
 
     // Check if user exists
-    const user = await User.findOne({ username, email });
+    const user = await User.findOne({ email });
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }

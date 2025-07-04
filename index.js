@@ -101,7 +101,7 @@ mongoose.connect(MONGODB_URI)
     require('./socket/chat')(io);
 
     // Start the server using the http server with Socket.IO
-    server.listen(PORT, () => {
+    server.listen(PORT, "0.0.0.0", () => {
       console.log(`👌✨Server running at http://localhost:${PORT}`);
     });
   })
